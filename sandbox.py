@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     best_score = -float("inf")
 
-    for trials in range(520):
+    for trials in range(128):
 
 
         body, connections = sample_robot((6,6))

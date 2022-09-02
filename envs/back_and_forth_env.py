@@ -153,13 +153,13 @@ class BackAndForthEnvClass(EvoGymBase):
 
 
         if self.robot_body.sum() == 0:
-            print("no body, left, sampling random body")
-            self.robot_body, _ = sample_robot(4,4) 
-        elif (self.robot_body > 0).sum() < 2:
+            # no empty bodies
             self.robot_body = old_body
-        elif self.robot_body.max() <= 2:
+        elif self.robot_body.max() <= 0:
+            # no passive robots
             self.robot_body = old_body
         elif not check_connected(self.robot_body):
+            # no disconnected body plans
             self.robot_body = old_body
 
 

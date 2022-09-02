@@ -1,5 +1,3 @@
 [run]
 source = envs, eg_auto 
 
-[report]
-omit = */config-3.pyG

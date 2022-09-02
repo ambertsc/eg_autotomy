@@ -12,6 +12,8 @@ from evogym import EvoWorld, sample_robot
 from evogym.envs import EvoGymBase
 import copy
 
+from eg_auto.helpers import check_connected
+
 
 class BackAndForthEnvClass(EvoGymBase):
     
@@ -149,6 +151,7 @@ class BackAndForthEnvClass(EvoGymBase):
 
             self.robot_body *= (mask[0] == keep_index) 
 
+
         if self.robot_body.sum() == 0:
             print("no body, left, sampling random body")
             self.robot_body, _ = sample_robot(4,4) 
@@ -156,6 +159,9 @@ class BackAndForthEnvClass(EvoGymBase):
             self.robot_body = old_body
         elif self.robot_body.max() <= 2:
             self.robot_body = old_body
+        elif not check_connected(self.robot_body):
+            self.robot_body = old_body
+
 
         self.robot_body = np.clip(self.robot_body, 0, 5)
 

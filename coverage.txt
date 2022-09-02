@@ -1,0 +1,9 @@
+Name                         Stmts   Miss  Cover
+------------------------------------------------
+eg_auto/__init__.py              0      0   100%
+eg_auto/helpers.py               9      0   100%
+envs/__init__.py                 3      0   100%
+envs/adaptive_walk_env.py       51     51     0%
+envs/back_and_forth_env.py     127     82    35%
+------------------------------------------------
+TOTAL                          190    133    30%

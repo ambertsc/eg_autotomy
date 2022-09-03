@@ -54,9 +54,20 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         self.assertTrue(True)
 
-    def test_steps(self):
+    def test_remove_robot(self):
 
         body, connections = sample_robot((4,4))
+        env = gym.make("BackAndForthEnv-v0", body=body)
+        env.remove_robot("robot")
+
+        self.assertFalse("robot" in env.world.objects.keys())
+
+
+    def test_steps(self):
+
+        body = np.array([[1,0.,0,1],[1,3,3,1],[1,3,3,4],[1,0,0,4],[0,0,0,4]])
+        connections = None
+
         env = gym.make("BackAndForthEnv-v0", body=body)
 
         _ = env.reset()
@@ -64,12 +75,19 @@ class TestBackAndForthEnv(unittest.TestCase):
         pruning = np.random.randint(0,2, size=(env.robot_body_elements,))
 
 
-        for step in range(10):
+        env.goal = [2, 32]
+
+        self.assertFalse(env.mode)
+
+        for step in range(100):
             action = env.action_space.sample()
 
             action[-env.robot_body_elements:] = pruning
 
             obs, reward, done, info = env.step(action)
             total_reward += reward
+
+        env.reverse_direction(action)
+        self.assertTrue(env.mode)
 
         self.assertTrue(True)

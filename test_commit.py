@@ -4,7 +4,7 @@ import os
 if __name__ == "__main__":
 
     test_command = "coverage run -m eg_tests.test_all"
-    coverage_command = "coverage report > coverage.txt"
+    coverage_command = "coverage report -m > coverage.txt"
 
     git_command = "git add coverage.txt"
 

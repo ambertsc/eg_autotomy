@@ -45,24 +45,17 @@ class BackAndForthEnvClass(EvoGymBase):
 
     def add_robot(self, body, connections):
 
-        try:
-            self.robot_body = body
-            self.robot_body_elements = self.robot_body.shape[0] * self.robot_body.shape[1]
+        self.robot_body = body
+        self.robot_body_elements = self.robot_body.shape[0] * self.robot_body.shape[1]
 
-            if self.mode:
-                self.world.add_from_array("robot", body, 32, 4, connections=connections) 
-            else:
-                self.world.add_from_array("robot", body, 32, 4, connections=connections) 
-        except:
-            print("oh nose")
-            import pdb; pdb.set_trace()
+        if self.mode:
+            self.world.add_from_array("robot", body, 32, 4, connections=connections) 
+        else:
+            self.world.add_from_array("robot", body, 32, 4, connections=connections) 
 
     def setup_action_space(self):
 
-        try:
-            self.num_actuators = self.get_actuator_indices("robot").size 
-        except:
-            import pdb; pdb.set_trace()
+        self.num_actuators = self.get_actuator_indices("robot").size 
 
         obs_size = self.get_obs().size
 
@@ -74,15 +67,6 @@ class BackAndForthEnvClass(EvoGymBase):
     def remove_robot(self, name="robot"):
         
         self.world.remove_object(name)
-
-    def replace_robot(self, body, connections, name="robot"):
-
-        robot_position = self.world.objects["robot"].pos 
-
-        self.remove_robot("robot")
-
-        self.world.add_from_array("robot", body, robot_position[0], robot_position[1], \
-                connections=connections)
 
     def step(self, action):
 
@@ -99,6 +83,9 @@ class BackAndForthEnvClass(EvoGymBase):
 
         center_of_mass_1 = np.mean(position_1,1)
         center_of_mass_2 = np.mean(position_2,1)
+
+        info = {"center_of_mass_1": center_of_mass_1,\
+                "center_of_mass_2": center_of_mass_2}
 
         reward = center_of_mass_2[0] - center_of_mass_1[0]
 

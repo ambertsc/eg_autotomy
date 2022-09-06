@@ -80,6 +80,50 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         self.assertFalse("robot" in env.world.objects.keys())
 
+    def test_autotomy(self):
+
+        body = np.ones((8,8)) * 3
+        connections = None
+
+        env = gym.make("BackAndForthEnv-v0", body=body, goal=[2,48], allow_autotomy=False)
+
+        old_body = 1. * env.robot_body
+
+        _ = env.reset()
+
+        total_reward = 0.
+        autotomy = np.zeros((env.robot_body_elements,))
+
+        for step in range(10):
+            action = env.action_space.sample()
+
+            action[-env.robot_body_elements:] = autotomy
+
+            obs, reward, done, info = env.step(action)
+            total_reward += reward
+
+        self.assertNotIn(False, old_body == env.robot_body)
+
+        env = gym.make("BackAndForthEnv-v0", body=body, goal=[2,48], allow_autotomy=True)
+
+        old_body = 1. * env.robot_body
+
+        _ = env.reset()
+
+        total_reward = 0.
+        autotomy = np.ones((env.robot_body_elements,))
+
+        autotomy[6] = 0
+
+        for step in range(10):
+            action = env.action_space.sample()
+
+            action[-env.robot_body_elements:] = autotomy
+
+            obs, reward, done, info = env.step(action)
+            total_reward += reward
+
+        self.assertIn(False, old_body == env.robot_body)
 
     def test_steps(self):
 
@@ -90,13 +134,13 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         _ = env.reset()
         total_reward = 0.
-        pruning = np.zeros((env.robot_body_elements,))
+        autotomy = np.ones((env.robot_body_elements,))
 
         self.assertFalse(env.mode)
 
         action = env.action_space.sample()
 
-        action[-env.robot_body_elements:] = pruning
+        action[-env.robot_body_elements:] = autotomy
 
         obs, reward, done, info = env.step(action)
         total_reward += reward
@@ -104,17 +148,14 @@ class TestBackAndForthEnv(unittest.TestCase):
         env = gym.make("BackAndForthEnv-v0", body=body, goal=[2,48])
         _ = env.reset()
 
-        pruning = np.ones((env.robot_body_elements,))
+        autotomy = np.ones((env.robot_body_elements,))
 
-        #pruning[1] = 0
-        pruning[8] = 0
-        #pruning[9] = 0
-        #pruning[13] = 0
+        autotomy[8] = 0
 
         for step in range(10):
             action = env.action_space.sample()
 
-            action[-env.robot_body_elements:] = pruning
+            action[-env.robot_body_elements:] = autotomy
 
             obs, reward, done, info = env.step(action)
             total_reward += reward

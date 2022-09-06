@@ -16,7 +16,7 @@ from eg_auto.helpers import check_connected
 
 class BackAndForthEnvClass(EvoGymBase):
     
-    def __init__(self, body=None, connections=None):
+    def __init__(self, body=None, connections=None, **kwargs):
 
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
         filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
@@ -30,7 +30,13 @@ class BackAndForthEnvClass(EvoGymBase):
 
 
         self.mode = np.array([0])
-        self.goal = [48, 16]
+
+        if "goal" in kwargs.keys():
+            self.goal = kwargs["goal"]
+            assert len(self.goal) == 2
+        else:
+            self.goal = [48, 16]
+
         self.goal_counter = np.array([0])
         self.add_robot(body, connections)
         
@@ -193,7 +199,6 @@ class BackAndForthEnvClass(EvoGymBase):
         super().reset()
 
         self.mode = np.array([0])
-        self.goal = [48, 16]
         self.goal_counter = np.array([0])
 
         obs = self.get_obs()

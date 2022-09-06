@@ -26,6 +26,14 @@ class TestAdaptiveWalkEnv(unittest.TestCase):
 
         self.assertTrue(True)
 
+    def test_remove_robot(self):
+
+        body, connections = sample_robot((4,4))
+        env = gym.make("AdaptiveWalkEnv-v0", body=body)
+        env.remove_robot("robot")
+
+        self.assertFalse("robot" in env.world.objects.keys())
+
     def test_steps(self):
 
         body, connections = sample_robot((4,4))
@@ -82,14 +90,28 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         _ = env.reset()
         total_reward = 0.
-        pruning = np.random.randint(0,2, size=(env.robot_body_elements,))
-
-
-        env.goal = [2, 32]
+        pruning = np.zeros((env.robot_body_elements,))
 
         self.assertFalse(env.mode)
 
-        for step in range(100):
+        action = env.action_space.sample()
+
+        action[-env.robot_body_elements:] = pruning
+
+        obs, reward, done, info = env.step(action)
+        total_reward += reward
+
+        env = gym.make("BackAndForthEnv-v0", body=body, goal=[2,48])
+        _ = env.reset()
+
+        pruning = np.ones((env.robot_body_elements,))
+
+        #pruning[1] = 0
+        pruning[8] = 0
+        #pruning[9] = 0
+        #pruning[13] = 0
+
+        for step in range(10):
             action = env.action_space.sample()
 
             action[-env.robot_body_elements:] = pruning

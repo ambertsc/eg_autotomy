@@ -14,15 +14,21 @@ import copy
 
 from eg_auto.helpers import check_connected
 
-
 class BackAndForthEnvClass(EvoGymBase):
     
-    def __init__(self, body, connections=None):
+    def __init__(self, body=None, connections=None):
 
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
         filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
         self.world = EvoWorld.from_json(filepath)
             
+        if body is None:
+            # establish default body plan
+            body = np.ones((8,8))
+            body[1:-1,1:-1] = 3
+            body[-1,1:-1] = 0 
+
+
         self.mode = np.array([0])
         self.goal = [48, 16]
         self.goal_counter = np.array([0])

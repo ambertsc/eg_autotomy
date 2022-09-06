@@ -54,6 +54,16 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         self.assertTrue(True)
 
+    def test_env_init_default_body(self):
+        env = gym.make("BackAndForthEnv-v0")
+
+        _ = env.reset()
+        action = env.action_space.sample()
+
+        o, r, d, i = env.step(action)
+
+        self.assertEquals(dict, type(i))
+
     def test_remove_robot(self):
 
         body, connections = sample_robot((4,4))

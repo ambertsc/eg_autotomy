@@ -6,9 +6,9 @@ import numpy as np
 
 from eg_auto.helpers import check_connected
 
-import envs
 import gym
-from envs.back_and_forth_env import BackAndForthEnvClass
+import eg_envs
+from eg_envs.back_and_forth_env import BackAndForthEnvClass
 
 from evogym import EvoWorld, EvoSim, \
         EvoViewer, sample_robot
@@ -25,6 +25,14 @@ class TestAdaptiveWalkEnv(unittest.TestCase):
         env = gym.make("AdaptiveWalkEnv-v0", body=body)
 
         self.assertTrue(True)
+
+    def test_remove_robot(self):
+
+        body, connections = sample_robot((4,4))
+        env = gym.make("AdaptiveWalkEnv-v0", body=body)
+        env.remove_robot("robot")
+
+        self.assertFalse("robot" in env.world.objects.keys())
 
     def test_steps(self):
 
@@ -54,6 +62,16 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         self.assertTrue(True)
 
+    def test_env_init_default_body(self):
+        env = gym.make("BackAndForthEnv-v0")
+
+        _ = env.reset()
+        action = env.action_space.sample()
+
+        o, r, d, i = env.step(action)
+
+        self.assertEqual(dict, type(i))
+
     def test_remove_robot(self):
 
         body, connections = sample_robot((4,4))
@@ -62,6 +80,50 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         self.assertFalse("robot" in env.world.objects.keys())
 
+    def test_autotomy(self):
+
+        body = np.ones((8,8)) * 3
+        connections = None
+
+        env = gym.make("BackAndForthEnv-v0", body=body, goal=[2,48], allow_autotomy=False)
+
+        old_body = 1. * env.robot_body
+
+        _ = env.reset()
+
+        total_reward = 0.
+        autotomy = np.zeros((env.robot_body_elements,))
+
+        for step in range(10):
+            action = env.action_space.sample()
+
+            action[-env.robot_body_elements:] = autotomy
+
+            obs, reward, done, info = env.step(action)
+            total_reward += reward
+
+        self.assertNotIn(False, old_body == env.robot_body)
+
+        env = gym.make("BackAndForthEnv-v0", body=body, goal=[2,48], allow_autotomy=True)
+
+        old_body = 1. * env.robot_body
+
+        _ = env.reset()
+
+        total_reward = 0.
+        autotomy = np.ones((env.robot_body_elements,))
+
+        autotomy[6] = 0
+
+        for step in range(10):
+            action = env.action_space.sample()
+
+            action[-env.robot_body_elements:] = autotomy
+
+            obs, reward, done, info = env.step(action)
+            total_reward += reward
+
+        self.assertIn(False, old_body == env.robot_body)
 
     def test_steps(self):
 
@@ -72,17 +134,28 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         _ = env.reset()
         total_reward = 0.
-        pruning = np.random.randint(0,2, size=(env.robot_body_elements,))
-
-
-        env.goal = [2, 32]
+        autotomy = np.ones((env.robot_body_elements,))
 
         self.assertFalse(env.mode)
 
-        for step in range(100):
+        action = env.action_space.sample()
+
+        action[-env.robot_body_elements:] = autotomy
+
+        obs, reward, done, info = env.step(action)
+        total_reward += reward
+
+        env = gym.make("BackAndForthEnv-v0", body=body, goal=[2,48])
+        _ = env.reset()
+
+        autotomy = np.ones((env.robot_body_elements,))
+
+        autotomy[8] = 0
+
+        for step in range(10):
             action = env.action_space.sample()
 
-            action[-env.robot_body_elements:] = pruning
+            action[-env.robot_body_elements:] = autotomy
 
             obs, reward, done, info = env.step(action)
             total_reward += reward

@@ -14,17 +14,34 @@ import copy
 
 from eg_auto.helpers import check_connected
 
-
 class BackAndForthEnvClass(EvoGymBase):
     
-    def __init__(self, body, connections=None):
+    def __init__(self, body=None, connections=None, **kwargs):
 
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
         filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
         self.world = EvoWorld.from_json(filepath)
             
+        if body is None:
+            # establish default body plan
+            body = np.ones((8,8))
+            body[1:-1,1:-1] = 3
+            body[-1,1:-1] = 0 
+
+
         self.mode = np.array([0])
-        self.goal = [48, 16]
+
+        if "goal" in kwargs.keys():
+            self.goal = kwargs["goal"]
+            assert len(self.goal) == 2
+        else:
+            self.goal = [48, 16]
+            
+        if "allow_autotomy" in kwargs.keys():
+            self.allow_autotomy = kwargs["allow_autotomy"]
+        else:
+            self.allow_autotomy = True 
+
         self.goal_counter = np.array([0])
         self.add_robot(body, connections)
         
@@ -85,7 +102,9 @@ class BackAndForthEnvClass(EvoGymBase):
         center_of_mass_2 = np.mean(position_2,1)
 
         info = {"center_of_mass_1": center_of_mass_1,\
-                "center_of_mass_2": center_of_mass_2}
+                "center_of_mass_2": center_of_mass_2,\
+                "end_0": 0,\
+                "end_1": 0}
 
         reward = center_of_mass_2[0] - center_of_mass_1[0]
 
@@ -98,7 +117,6 @@ class BackAndForthEnvClass(EvoGymBase):
             reward -= 3
 
         elif not(self.mode) and center_of_mass_2[0] >= self.goal[0]:
-            print(f"reached the end in mode {self.mode}")
             reward += 1
 
             if self.goal_counter >= 1:
@@ -106,21 +124,24 @@ class BackAndForthEnvClass(EvoGymBase):
             else: 
                 self.goal_counter += 1
 
+            info["end_0"] = 0
+
         elif self.mode and center_of_mass_2[0] <= self.goal[1]:
-            print(f"reached the end in mode {self.mode}")
             reward += 1
             done = True
+
+            info["end_1"] = 1
 
         obs = self.get_obs()
         
         return obs, reward, done, info
 
-    def filter_robot_body(self, pruning):
+    def filter_robot_body(self, autotomy):
         # remove non-contiguous active pixels
 
         old_body = copy.deepcopy(self.robot_body)
 
-        self.robot_body *= pruning
+        self.robot_body *= autotomy
         mask = label(self.robot_body)
 
         most = 0
@@ -158,9 +179,10 @@ class BackAndForthEnvClass(EvoGymBase):
         self.close()
 
         body_action = action[-self.robot_body_elements:]
-        pruning = 1.0 * (body_action > 0.5).reshape(self.robot_body.shape)
+        autotomy = 1.0 * (body_action > 0.5).reshape(self.robot_body.shape)
 
-        self.filter_robot_body(pruning)
+        if self.allow_autotomy:
+            self.filter_robot_body(autotomy)
 
         self.add_robot(self.robot_body, connections=None)
 
@@ -187,7 +209,6 @@ class BackAndForthEnvClass(EvoGymBase):
         super().reset()
 
         self.mode = np.array([0])
-        self.goal = [48, 16]
         self.goal_counter = np.array([0])
 
         obs = self.get_obs()

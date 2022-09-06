@@ -48,15 +48,6 @@ class AdaptiveWalkEnvClass(EvoGymBase):
         
         self.world.remove_object(name)
 
-    def replace_robot(self, body, connections, name="robot"):
-
-        robot_position = self.world.objects["robot"].pos 
-
-        self.remove_robot("robot")
-
-        self.world.add_from_array("robot", body, robot_position[0], robot_position[1], \
-                connections=connections)
-
     def step(self, action):
 
         obs, reward, done, info  = 0, 0, True, {}

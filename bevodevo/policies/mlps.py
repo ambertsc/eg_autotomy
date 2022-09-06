@@ -24,7 +24,7 @@ class MLPPolicy(nn.Module):
         self.activations = kwargs["activations"] \
                 if "activations" in kwargs.keys() else nn.ReLU
         self.discrete = kwargs["discrete"] if "discrete" in kwargs.keys() else False
-        self.use_bias = False
+        self.use_bias = True
         self.var = 1.e-2
 
         if type(self.activations) == list:
@@ -134,6 +134,8 @@ class HebbianMLP(MLPPolicy):
         self.e_max = 1.
         
         super(HebbianMLP, self).__init__(**kwargs)
+        self.use_bias = False
+        self.init_params()
         if self.plastic:
             self.init_traces()
         else:

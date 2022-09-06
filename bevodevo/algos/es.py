@@ -15,7 +15,6 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 
 from bevodevo.policies.rnns import GatedRNNPolicy
-from bevodevo.policies.cnns import ImpalaCNNPolicy
 from bevodevo.policies.mlps import MLPPolicy
 
 class ESPopulation:

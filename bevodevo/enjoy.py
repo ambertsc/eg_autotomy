@@ -18,8 +18,8 @@ comm = MPI.COMM_WORLD
 
 from bevodevo.policies.rnns import GatedRNNPolicy
 from bevodevo.policies.cnns import ImpalaCNNPolicy
-from bevodevo.policies.mlps import MLPPolicy, CPPNMLPPolicy, CPPNHebbianMLP,\
-        HebbianMLP, ABCHebbianMLP, HebbianMetaMLP, ABCHebbianMetaMLP
+from bevodevo.policies.mlps import MLPPolicy, \
+        HebbianMLP, ABCHebbianMLP 
 
 
 from bevodevo.algos.es import ESPopulation
@@ -28,6 +28,7 @@ from bevodevo.algos.pges import PGESPopulation
 from bevodevo.algos.ga import GeneticPopulation
 from bevodevo.algos.random_search import RandomSearch
 
+import eg_envs
 
 def enjoy(argv):
 
@@ -139,7 +140,8 @@ def enjoy(argv):
 
 
 
-        agent = policy_fn(agent_args, discrete=discrete)
+        agent_args["discrete"] = discrete
+        agent = policy_fn(**agent_args)
 
 
         if ".pt" in my_file_path:

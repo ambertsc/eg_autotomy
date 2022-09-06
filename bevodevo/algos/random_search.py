@@ -6,7 +6,6 @@ import torch
 import numpy as np
 
 from bevodevo.policies.rnns import GatedRNNPolicy
-from bevodevo.policies.cnns import ImpalaCNNPolicy
 from bevodevo.policies.mlps import MLPPolicy
 
 from bevodevo.algos.es import ESPopulation

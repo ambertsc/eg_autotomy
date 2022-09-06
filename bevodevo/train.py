@@ -16,9 +16,8 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 
 from bevodevo.policies.rnns import GatedRNNPolicy
-from bevodevo.policies.cnns import ImpalaCNNPolicy
-from bevodevo.policies.mlps import MLPPolicy, CPPNMLPPolicy, CPPNHebbianMLP,\
-        HebbianMLP, ABCHebbianMLP, HebbianCAMLP, HebbianCAMLP2
+from bevodevo.policies.mlps import MLPPolicy,\
+        HebbianMLP, ABCHebbianMLP
 
 from bevodevo.algos.es import ESPopulation
 from bevodevo.algos.cmaes import CMAESPopulation

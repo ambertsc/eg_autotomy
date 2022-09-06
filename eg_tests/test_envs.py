@@ -6,9 +6,9 @@ import numpy as np
 
 from eg_auto.helpers import check_connected
 
-import envs
 import gym
-from envs.back_and_forth_env import BackAndForthEnvClass
+import eg_envs
+from eg_envs.back_and_forth_env import BackAndForthEnvClass
 
 from evogym import EvoWorld, EvoSim, \
         EvoViewer, sample_robot
@@ -62,7 +62,7 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         o, r, d, i = env.step(action)
 
-        self.assertEquals(dict, type(i))
+        self.assertEqual(dict, type(i))
 
     def test_remove_robot(self):
 

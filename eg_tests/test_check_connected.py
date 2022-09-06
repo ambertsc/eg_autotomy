@@ -6,9 +6,9 @@ import numpy as np
 
 from eg_auto.helpers import check_connected
 
-import envs
 import gym
-from envs.back_and_forth_env import BackAndForthEnvClass
+import eg_envs
+from eg_envs.back_and_forth_env import BackAndForthEnvClass
 
 class TestCheckConnected(unittest.TestCase):
 

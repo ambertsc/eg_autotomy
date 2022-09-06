@@ -8,7 +8,7 @@ from evogym import EvoWorld, EvoSim, \
         EvoViewer, sample_robot
 
 import gym
-import envs
+import eg_envs
 
 
 if __name__ == '__main__':

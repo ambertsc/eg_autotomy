@@ -287,6 +287,7 @@ class ESPopulation:
         max_generations = args.generations 
         population_size = args.population_size 
 
+        num_worker = args.num_workers
         disp_every = max(max_generations // 100, 1)
         save_every = max(max_generations // 20, 1)
 

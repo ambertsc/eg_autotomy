@@ -26,8 +26,8 @@ class BackAndForthEnvClass(EvoGymBase):
             # establish default body plan
             body = np.ones((4,4))
             body[1:-1,1:-1] = 3
+            body[1,:] = 4
             body[-1,1:-1] = 0 
-            body[-1,0] = 0 
 
 
         self.mode = np.array([0])

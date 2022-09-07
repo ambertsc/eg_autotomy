@@ -40,7 +40,7 @@ class GatedRNNPolicy(Policy):
         self.init_params()
 
         if "params" in kwargs.keys() and kwargs["params"] is not None: 
-            self.set_params(args["params"])
+            self.set_params(kwargs["params"])
     
     def init_params(self):
 

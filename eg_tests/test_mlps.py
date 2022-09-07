@@ -13,6 +13,7 @@ from evogym import EvoWorld, EvoSim, \
         EvoViewer, sample_robot
 
 from bevodevo.policies.mlps import MLPPolicy, HebbianMLP,  ABCHebbianMLP
+from bevodevo.policies.body_mlps import MLPBodyPolicy, HebbianMLPBody,  ABCHebbianMLPBody
 
 class TestMLPPolicy(unittest.TestCase):
 
@@ -65,6 +66,21 @@ class TestABCHebbianMLP(TestMLPPolicy):
 
         self.assertEqual(output.shape[-1], self.policy.action_dim)
 
+
+class TestMLPBodyPolicy(TestMLPPolicy):
+
+    def setUp(self):
+        self.policy = MLPBodyPolicy(params=None)
+
+class TestHebbianMLPBodyPolicy(TestMLPPolicy):
+
+    def setUp(self):
+        self.policy = HebbianMLPBody(params=None)
+
+class TestABCHebbianMLPBodyPolicy(TestMLPPolicy):
+
+    def setUp(self):
+        self.policy = ABCHebbianMLPBody(params=None)
 
 if __name__ == "__main__": #pragma: no cover
     unittest.main(verbosity=2)

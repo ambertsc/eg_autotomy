@@ -120,6 +120,7 @@ class MLPPolicy(nn.Module):
             param[:] = torch.nn.Parameter(torch.tensor(\
                     my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
                     requires_grad=self.use_grad)
+            param_start = param_stop
 
     def reset(self):
         pass
@@ -266,6 +267,8 @@ class HebbianMLP(MLPPolicy):
                     my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
                     requires_grad=self.use_grad)
 
+            param_start = param_stop
+
         if self.plastic:
             for name, param in self.lr_layers.named_parameters():
 
@@ -274,6 +277,8 @@ class HebbianMLP(MLPPolicy):
                 param[:] = torch.nn.Parameter(torch.tensor(\
                         my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
                         requires_grad=self.use_grad)
+
+                param_start = param_stop
 
     def reset(self):
 
@@ -418,6 +423,8 @@ class ABCHebbianMLP(HebbianMLP):
                     my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
                     requires_grad=self.use_grad)
 
+            param_start = param_stop
+
         if self.plastic:
             for name, param in self.lr_layers.named_parameters():
 
@@ -427,6 +434,8 @@ class ABCHebbianMLP(HebbianMLP):
                         my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
                         requires_grad=self.use_grad)
 
+                param_start = param_stop
+
             for name, param in self.a_layers.named_parameters():
 
                 param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
@@ -434,6 +443,9 @@ class ABCHebbianMLP(HebbianMLP):
                 param[:] = torch.nn.Parameter(torch.tensor(\
                         my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
                         requires_grad=self.use_grad)
+
+                param_start = param_stop
+
             for name, param in self.b_layers.named_parameters():
 
                 param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
@@ -441,6 +453,9 @@ class ABCHebbianMLP(HebbianMLP):
                 param[:] = torch.nn.Parameter(torch.tensor(\
                         my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
                         requires_grad=self.use_grad)
+
+                param_start = param_stop
+                
             for name, param in self.c_layers.named_parameters():
 
                 param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
@@ -449,6 +464,9 @@ class ABCHebbianMLP(HebbianMLP):
                         my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
                         requires_grad=self.use_grad)
 
+
+                param_start = param_stop
+                
 
 
 

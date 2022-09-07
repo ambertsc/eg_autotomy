@@ -67,12 +67,139 @@ class MLPBodyPolicy(MLPPolicy):
         self.body = temp.reshape(self.body.shape)
 
 
-class HebbianMLPBody(MLPPolicy):
+class HebbianMLPBody(HebbianMLP, MLPBodyPolicy):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-class ABCHebbianMLPBody(MLPPolicy):
+    def get_params(self):
+        params = np.array([])
+
+        for param in self.layers.named_parameters():
+            params = np.append(params, param[1].detach().numpy().ravel())
+
+        if self.lr_layers is not None and self.plastic:
+            for param in self.lr_layers.named_parameters():
+                params = np.append(params, param[1].detach().numpy().ravel())
+
+        params = np.append(params, self.body.ravel())
+
+        return params
+
+    def set_params(self, my_params):
+
+        param_start = 0
+        for name, param in self.layers.named_parameters():
+
+            param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
+
+            param[:] = torch.nn.Parameter(torch.tensor(\
+                    my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
+                    requires_grad=self.use_grad)
+
+            param_start = param_stop
+
+        if self.plastic:
+            for name, param in self.lr_layers.named_parameters():
+
+                param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
+
+                param[:] = torch.nn.Parameter(torch.tensor(\
+                        my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
+                        requires_grad=self.use_grad)
+
+                param_start = param_stop
+
+        param_stop = param_start \
+                + reduce(lambda x,y: x*y, self.body.shape)
+
+        temp = my_params[param_start:param_stop]
+
+        self.body = temp.reshape(self.body.shape)
+
+class ABCHebbianMLPBody(ABCHebbianMLP, MLPBodyPolicy):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    def get_params(self):
+        params = np.array([])
+
+        for param in self.layers.named_parameters():
+            params = np.append(params, param[1].detach().numpy().ravel())
+
+        if self.lr_layers is not None and self.plastic:
+            for param in self.lr_layers.named_parameters():
+                params = np.append(params, param[1].detach().numpy().ravel())
+            for param in self.a_layers.named_parameters():
+                params = np.append(params, param[1].detach().numpy().ravel())
+            for param in self.b_layers.named_parameters():
+                params = np.append(params, param[1].detach().numpy().ravel())
+            for param in self.c_layers.named_parameters():
+                params = np.append(params, param[1].detach().numpy().ravel())
+
+        params = np.append(params, self.body.ravel())
+
+        return params
+
+    def set_params(self, my_params):
+
+        param_start = 0
+        for name, param in self.layers.named_parameters():
+
+            param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
+
+            param[:] = torch.nn.Parameter(torch.tensor(\
+                    my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
+                    requires_grad=self.use_grad)
+
+            param_start = param_stop
+
+        if self.plastic:
+            for name, param in self.lr_layers.named_parameters():
+
+                param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
+
+                param[:] = torch.nn.Parameter(torch.tensor(\
+                        my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
+                        requires_grad=self.use_grad)
+
+                param_start = param_stop
+
+            for name, param in self.a_layers.named_parameters():
+
+                param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
+
+                param[:] = torch.nn.Parameter(torch.tensor(\
+                        my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
+                        requires_grad=self.use_grad)
+
+                param_start = param_stop
+
+            for name, param in self.b_layers.named_parameters():
+
+                param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
+
+                param[:] = torch.nn.Parameter(torch.tensor(\
+                        my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
+                        requires_grad=self.use_grad)
+
+                param_start = param_stop
+                
+            for name, param in self.c_layers.named_parameters():
+
+                param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
+
+                param[:] = torch.nn.Parameter(torch.tensor(\
+                        my_params[param_start:param_stop].reshape(param.shape), requires_grad=self.use_grad), \
+                        requires_grad=self.use_grad)
+
+
+                param_start = param_stop
+
+        param_stop = param_start \
+                + reduce(lambda x,y: x*y, self.body.shape)
+
+        temp = my_params[param_start:param_stop]
+
+        self.body = temp.reshape(self.body.shape)

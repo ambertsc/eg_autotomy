@@ -2,18 +2,18 @@ Name                              Stmts   Miss  Cover   Missing
 ---------------------------------------------------------------
 bevodevo/__init__.py                  1      0   100%
 bevodevo/algos/__init__.py            0      0   100%
-bevodevo/algos/cmaes.py              47     47     0%   1-101
-bevodevo/algos/es.py                321    321     0%   1-546
-bevodevo/algos/ga.py                 54     54     0%   1-98
-bevodevo/algos/nes.py                73     73     0%   1-137
-bevodevo/algos/pges.py               69     69     0%   1-129
-bevodevo/algos/random_search.py      28     28     0%   1-47
-bevodevo/enjoy.py                   153    153     0%   1-229
+bevodevo/algos/cmaes.py              47      6    87%   37, 77, 96-101
+bevodevo/algos/es.py                322    105    67%   48-50, 69-71, 75, 80-81, 84-86, 163-164, 211, 225, 243-264, 269-277, 306, 312, 348, 379-400, 415-421, 442, 447-449, 466-468, 482-483, 487-534, 542-547
+bevodevo/algos/ga.py                 54      5    91%   71, 93-98
+bevodevo/algos/nes.py                73     12    84%   47, 49, 51, 73-81, 117, 132-137
+bevodevo/algos/pges.py               69     13    81%   46, 48, 50, 70-80, 110, 125-129
+bevodevo/algos/random_search.py      28      4    86%   42-47
+bevodevo/enjoy.py                   152    152     0%   1-228
 bevodevo/plot.py                     33     33     0%   1-53
 bevodevo/policies/__init__.py         0      0   100%
-bevodevo/policies/base.py            19      8    58%   8-9, 12, 15, 18, 21, 24, 30
-bevodevo/policies/mlps.py           239     75    69%   31-41, 46, 55, 65-67, 72, 90, 96-103, 115-120, 125, 140, 161-165, 173, 190-191, 202, 258-272, 278-279, 325-335, 410-446, 457-470
-bevodevo/policies/rnns.py            80     80     0%   1-154
+bevodevo/policies/base.py            19      6    68%   12, 15, 18, 21, 24, 30
+bevodevo/policies/mlps.py           241     65    73%   31-41, 46, 55, 65-67, 72, 99, 142, 163-167, 175, 192-193, 204, 260-274, 280-281, 327-337, 412-448, 459-472
+bevodevo/policies/rnns.py            82     26    68%   43, 73, 89-96, 114-145, 148-149, 156
 bevodevo/train.py                    85     85     0%   1-121
 eg_auto/__init__.py                   0      0   100%
 eg_auto/helpers.py                    9      0   100%
@@ -21,4 +21,4 @@ eg_envs/__init__.py                   5      0   100%
 eg_envs/adaptive_walk_env.py         47      5    89%   67-70, 73-74
 eg_envs/back_and_forth_env.py       125      6    95%   115-118, 166, 169, 172
 ---------------------------------------------------------------
-TOTAL                              1388   1037    25%
+TOTAL                              1392    523    62%

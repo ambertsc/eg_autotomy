@@ -448,7 +448,7 @@ class ESPopulation:
                     print(self.means)
                     self.abort = True
 
-                if (generation > 0 and (generation % save_every == 0)) \
+                if (generation > 1 and (generation % save_every == 0)) \
                         or generation == max_generations-1\
                         or self.abort:
                     

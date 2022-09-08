@@ -34,6 +34,9 @@ class AdaptiveWalkEnvClass(EvoGymBase):
 
     def add_robot(self, body, connections):
 
+        self.robot_body = 1.0 * body
+        self.robot_body_elements = self.robot_body.shape[0] * self.robot_body.shape[1]
+
         self.world.add_from_array("robot", body, 8, 8, connections=connections) 
 
     def setup_action_space(self):

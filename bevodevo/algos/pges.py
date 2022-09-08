@@ -14,9 +14,9 @@ class PGESPopulation(ESPopulation):
     Plain Gradient Evolutionary Strategies
     """
 
-    def __init__(self, policy_fn, discrete=False, num_workers=0):
+    def __init__(self, policy_fn, discrete=False, num_workers=0, **kwargs):
         super(PGESPopulation, self).__init__(policy_fn, discrete = discrete,\
-                num_workers = num_workers)
+                num_workers = num_workers, **kwargs)
         
         self.lr = 1e-4
         self.std_dev = 1e0

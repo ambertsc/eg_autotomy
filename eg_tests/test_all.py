@@ -19,6 +19,8 @@ from eg_tests.test_algos import TestGeneticPopulation, \
         TestPGESPopulation,\
         TestCMAESPopulation,\
         TestRandomSearch
+        
+from eg_tests.test_enjoy import TestEnjoy
 
 if __name__ == "__main__":
 

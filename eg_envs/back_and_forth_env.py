@@ -71,6 +71,7 @@ class BackAndForthEnvClass(EvoGymBase):
 
     def setup_action_space(self):
 
+        
         self.num_actuators = self.get_actuator_indices("robot").size 
 
         obs_size = self.get_obs().size
@@ -127,6 +128,8 @@ class BackAndForthEnvClass(EvoGymBase):
 
         elif self.mode and center_of_mass_2[0] <= self.goal[1]:
             reward += 1
+            time_bonus = self._max_episode_steps - self.get_time()
+            reward += time_bonus/self._max_episode_steps
             done = True
 
             info["end_1"] = 1
@@ -162,7 +165,7 @@ class BackAndForthEnvClass(EvoGymBase):
         if self.robot_body.sum() == 0:
             # no empty bodies
             self.robot_body = old_body
-        elif self.robot_body.max() <= 0:
+        elif self.robot_body.max() <= 2:
             # no passive robots
             self.robot_body = old_body
         elif not check_connected(self.robot_body):
@@ -172,7 +175,6 @@ class BackAndForthEnvClass(EvoGymBase):
         self.robot_body = 1.0 * np.clip(self.robot_body, 0, 4)
         
         self.add_robot(self.robot_body, connections=None)
-
 
     def reverse_direction(self, action):
 
@@ -194,6 +196,9 @@ class BackAndForthEnvClass(EvoGymBase):
 
         super(BackAndForthEnvClass, self).__init__(self.world)
             
+        if "robot" not in self.world.objects.keys():
+            import pdb; pdb.set_trace()
+
         self.setup_action_space()
         self.default_viewer.track_objects("robot") 
 

@@ -169,7 +169,6 @@ class BackAndForthEnvClass(EvoGymBase):
             # no disconnected body plans
             self.robot_body = old_body
 
-
         self.robot_body = 1.0 * np.clip(self.robot_body, 0, 4)
         
         self.add_robot(self.robot_body, connections=None)
@@ -188,6 +187,8 @@ class BackAndForthEnvClass(EvoGymBase):
 
         if self.allow_autotomy:
             self.filter_robot_body(autotomy)
+        else:
+            self.filter_robot_body(np.ones(self.robot_body.shape))
 
         self.goal_counter = np.array([0])
 

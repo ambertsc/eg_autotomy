@@ -11,9 +11,9 @@ from bevodevo.algos.es import ESPopulation
 
 class CMAESPopulation(ESPopulation):
     def __init__(self, policy_fn, \
-            num_workers=0):
+            num_workers=0, **kwargs):
 
-        super(CMAESPopulation, self).__init__(policy_fn)
+        super(CMAESPopulation, self).__init__(policy_fn, **kwargs)
 
 
     def update_pop(self, fitness_list):

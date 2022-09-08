@@ -95,7 +95,12 @@ def train(argv):
 
     num_workers = argv.num_workers
 
-    population = population_fn(policy_fn, num_workers=num_workers)
+    if "use_autotomy" in dict(argv._get_kwargs()).keys():
+        kwargs = {"allow_autotomy": argv.use_autotomy}
+    else:
+        kwargs = {"allow_autotomy": 0}
+
+    population = population_fn(policy_fn, num_workers=num_workers, **kwargs)
     
     population.train(argv)
 
@@ -114,12 +119,14 @@ if __name__ == "__main__":
             help="name of policy architecture", default="MLPPolicy")
     parser.add_argument("-g", "--generations", type=int,\
             help="number of generations", default=50)
+    parser.add_argument("-s", "--seeds", type=int, nargs="+", default=42,\
+            help="seed for initializing pseudo-random number generator")
+    parser.add_argument("-u", "--use_autotomy", type=int, default=1,\
+            help="allow autotomy in training (for envs that support it)")
     parser.add_argument("-t", "--performance_threshold", type=float,\
             help="performance threshold to use for early stopping", default=float("Inf"))
     parser.add_argument("-x", "--exp_name", type=str, \
             help="name of experiment", default="temp_exp")
-    parser.add_argument("-s", "--seeds", type=int, nargs="+", default=42,\
-            help="seed for initializing pseudo-random number generator")
 
     args = parser.parse_args()
 

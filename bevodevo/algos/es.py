@@ -21,7 +21,7 @@ from eg_auto.helpers import check_connected
 
 class ESPopulation:
 
-    def __init__(self, policy_fn, discrete=False, num_workers=0, threshold=float("Inf")):
+    def __init__(self, policy_fn, discrete=False, num_workers=0, threshold=float("Inf"), **kwargs):
         
         self.policy_fn = policy_fn
 
@@ -37,6 +37,7 @@ class ESPopulation:
         self.threshold = threshold
 
         self.tourney_size = 5
+        self.kwargs = kwargs
 
     def get_agent_action(self, obs, agent_idx):
         return self.population[agent_idx].get_action(obs)
@@ -49,13 +50,13 @@ class ESPopulation:
         if view_elite:
             agent_idx = 0
             
-            self.env = self.env_fn(self.env_args, render_mode="human")
+            self.env = self.env_fn(self.env_args, render_mode="human", **self.kwargs)
 
         if "BackAndForthEnv" in self.env_args and "body" in dir(self.population[agent_idx]):
 
             body = self.population[agent_idx].get_body()
 
-            self.env = self.env_fn(id=self.env_args, body=body) 
+            self.env = self.env_fn(id=self.env_args, body=body, **self.kwargs) 
 
         self.population[agent_idx].reset()
 
@@ -308,7 +309,7 @@ class ESPopulation:
         seeds = args.seeds
         self.threshold = args.performance_threshold
 
-        self.env = self.env_fn(self.env_args) 
+        self.env = self.env_fn(self.env_args, **self.kwargs) 
         obs_dim = self.env.observation_space.shape
 
         if len(obs_dim) == 3:
@@ -497,7 +498,7 @@ class ESPopulation:
         
         self.env_fn = gym.make 
         self.env_args = env_name 
-        self.env = self.env_fn(self.env_args)
+        self.env = self.env_fn(self.env_args, **self.kwargs)
 
         obs_dim = self.env.observation_space.shape
         if len(obs_dim) == 3:

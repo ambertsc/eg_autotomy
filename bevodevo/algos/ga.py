@@ -11,8 +11,8 @@ from bevodevo.algos.es import ESPopulation
 
 class GeneticPopulation(ESPopulation):
 
-    def __init__(self, policy_fn, num_workers=0):
-        super(GeneticPopulation, self).__init__(policy_fn, num_workers=num_workers)
+    def __init__(self, policy_fn, num_workers=0, **kwargs):
+        super(GeneticPopulation, self).__init__(policy_fn, num_workers=num_workers, **kwargs)
 
 
     def mutate(self, params):

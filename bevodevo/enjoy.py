@@ -214,8 +214,9 @@ def enjoy(argv):
         print("max rew: {:.3e}, min rew: {:.3e}".format(np.max(epd_rewards), np.min(epd_rewards)))
 
         env.close()
-        
-
+    
+    return 0
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Experiment parameters")
 

@@ -61,7 +61,7 @@ class BackAndForthEnvClass(EvoGymBase):
 
     def add_robot(self, body, connections):
 
-        self.robot_body = body
+        self.robot_body = 1.0 * body
         self.robot_body_elements = self.robot_body.shape[0] * self.robot_body.shape[1]
 
         if self.mode:
@@ -170,11 +170,13 @@ class BackAndForthEnvClass(EvoGymBase):
             self.robot_body = old_body
 
 
-        self.robot_body = np.clip(self.robot_body, 0, 4)
+        self.robot_body = 1.0 * np.clip(self.robot_body, 0, 4)
+        
+        self.remove_robot()
+        self.add_robot(self.robot_body, connections=None)
 
     def reverse_direction(self, action):
 
-        self.remove_robot()
         self.close()
 
         body_action = action[-self.robot_body_elements:]
@@ -182,8 +184,6 @@ class BackAndForthEnvClass(EvoGymBase):
 
         if self.allow_autotomy:
             self.filter_robot_body(autotomy)
-
-        self.add_robot(self.robot_body, connections=None)
 
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
         filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")

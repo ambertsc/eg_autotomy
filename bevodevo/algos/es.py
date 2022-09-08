@@ -59,7 +59,6 @@ class ESPopulation:
 
         self.population[agent_idx].reset()
 
-
         for epd in range(epds):
 
             obs = self.env.reset()
@@ -87,6 +86,7 @@ class ESPopulation:
                 try:
                     obs, reward, done, info = self.env.step(action)
                 except:
+                    print("Oh nose")
                     import pdb; pdb.set_trace()
 
                 if len(obs.shape) == 3:

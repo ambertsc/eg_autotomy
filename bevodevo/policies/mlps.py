@@ -47,7 +47,8 @@ class MLPPolicy(nn.Module):
             # TODO: test/implement discrete action spaces
             #self.activations.append(lambda x: x)
         else:
-            self.activations.append(nn.Tanh)
+
+            self.activations.append(nn.ReLU)
 
         self.init_params()
 

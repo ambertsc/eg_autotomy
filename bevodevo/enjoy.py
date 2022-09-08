@@ -136,11 +136,15 @@ def enjoy(argv):
         if type(parameters) is dict:
             agent_args = {"dim_x": obs_dim, "dim_h": hid_dim, \
                     "dim_y": act_dim, "params": parameters["elite_0"]} 
+            if "body_dim" in dict(argv._get_kwargs()).keys():
+                agent_args["body_dim"] = argv.body_dim
             my_params = agent_args["params"]
             agent_args["params"] = None
         else:
             agent_args = {"dim_x": obs_dim, "dim_h": hid_dim, \
                     "dim_y": act_dim, "params": parameters} 
+            if "body_dim" in dict(argv._get_kwargs()).keys():
+                agent_args["body_dim"] = argv.body_dim
             my_params = agent_args["params"]
             agent_args["params"] = None
             if ".pt" in my_file_path:

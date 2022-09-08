@@ -129,7 +129,7 @@ class BackAndForthEnvClass(EvoGymBase):
         elif self.mode and center_of_mass_2[0] <= self.goal[1]:
             reward += 1
             time_bonus = self._max_episode_steps - self.get_time()
-            reward += time_bonus/self._max_episode_steps
+            reward += 10 * time_bonus/self._max_episode_steps
             done = True
 
             info["end_1"] = 1

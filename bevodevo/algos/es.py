@@ -328,6 +328,8 @@ class ESPopulation:
         self.elite_keep = max([1, int(0.125 * self.population_size)])
         
         agent_args = {"dim_x": obs_dim, "dim_h": hid_dim, "dim_y": act_dim, "params": None} 
+        if "body_dim" in self.kwargs.keys():
+            agent_args["body_dim"] = self.kwargs["body_dim"]
 
 
 
@@ -529,6 +531,8 @@ class ESPopulation:
 
                 agent_args = {"dim_x": obs_dim, "dim_h": hid_dim, \
                         "dim_y": act_dim, "params": None} 
+                if "body_dim" in self.kwargs.keys():
+                    agent_args["body_dim"] = self.kwargs["body_dim"]
                 self.population.append(self.policy_fn(**agent_args))
                 self.population[-1].set_params(params_list[ii])
             

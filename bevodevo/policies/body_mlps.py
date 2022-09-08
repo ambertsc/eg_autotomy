@@ -23,16 +23,16 @@ class MLPBodyPolicy(MLPPolicy):
     def __init__(self, **kwargs):
 
         if "body_dim" in kwargs.keys():
-            self.body_dim = min([kwargs["body_dim"], 5])
+            self.body_dim = min([kwargs["body_dim"], 8])
         else:
-            self.body_dim = 5
+            self.body_dim = 8
 
         self.init_body()
 
         super().__init__(**kwargs)
 
         self.action_dim = 2 * reduce(lambda x,y: x*y, self.body.shape)
-        self.max_observation_dim = 96
+        self.max_observation_dim = 200
         self.input_dim = self.max_observation_dim
         self.init_params()
         

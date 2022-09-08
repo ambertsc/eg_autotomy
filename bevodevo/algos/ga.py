@@ -24,6 +24,7 @@ class GeneticPopulation(ESPopulation):
 
         pruning_rate = 0.05
         weight_var = 0.20
+        weight_rate = 0.05
         recombination_rate = 0.125
 
         mut_chance = np.random.random((3))
@@ -35,7 +36,9 @@ class GeneticPopulation(ESPopulation):
 
         if mut_chance[1] <= weight_chance:
             # weight value mutations 
-            mut_params = mut_params + np.random.randn(params.shape[0],) * weight_var
+            mutations = np.random.randn(params.shape[0],) 
+            mutations *= 1.0 * (np.random.rand(params.shape[0],) > weight_rate)
+            mut_params = mut_params + mutations 
 
         if mut_chance[2] <= recombination_chance:
             # recombination 

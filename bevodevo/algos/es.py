@@ -17,6 +17,8 @@ comm = MPI.COMM_WORLD
 from bevodevo.policies.rnns import GatedRNNPolicy
 from bevodevo.policies.mlps import MLPPolicy
 
+from eg_auto.helpers import check_connected
+
 class ESPopulation:
 
     def __init__(self, policy_fn, discrete=False, num_workers=0, threshold=float("Inf")):
@@ -49,8 +51,15 @@ class ESPopulation:
             
             self.env = self.env_fn(self.env_args, render_mode="human")
 
+        if "BackAndForthEnv" in self.env_args and "body" in dir(self.population[agent_idx]):
+
+            body = self.population[agent_idx].get_body()
+
+            self.env = self.env_fn(id=self.env_args, body=body) 
 
         self.population[agent_idx].reset()
+
+
         for epd in range(epds):
 
             obs = self.env.reset()
@@ -72,7 +81,7 @@ class ESPopulation:
 
                     if (np.max(action) > self.env.action_space.high).any()\
                             or (np.min(action) < self.env.action_space.low).any():
-                        action = np.clip(action, self.env.action_space.low, self.env.action_space.high)
+                        action = np.clip(action, self.env.action_space.low.min(), self.env.action_space.high.max())
 
                 prev_obs = obs
                 try:

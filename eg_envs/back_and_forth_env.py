@@ -5,8 +5,6 @@ import numpy as np
 from gym import spaces
 
 import scipy
-import scipy
-from scipy.ndimage import label
 from scipy.ndimage import label
 from evogym import EvoWorld, sample_robot
 from evogym.envs import EvoGymBase
@@ -47,7 +45,7 @@ class BackAndForthEnvClass(EvoGymBase):
         self.add_robot(body, connections)
         
         super().__init__(self.world)
-
+        
         self.setup_action_space()
 
         self.default_viewer.track_objects("robot") 
@@ -172,7 +170,7 @@ class BackAndForthEnvClass(EvoGymBase):
             self.robot_body = old_body
 
 
-        self.robot_body = np.clip(self.robot_body, 0, 5)
+        self.robot_body = np.clip(self.robot_body, 0, 4)
 
     def reverse_direction(self, action):
 

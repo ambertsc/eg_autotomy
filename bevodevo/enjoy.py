@@ -206,11 +206,6 @@ def enjoy(argv):
                     else:
                         img = env.render(mode="rgb_array")
 
-                    #plt.figure()
-                    #plt.imshow(img)
-                    #plt.savefig("./frames/frame_agent{}_pd{}_step{}.png".format(\
-                    #        agent_idx, episode, step_count))
-                    #plt.close()
                     image_path = f"./frames/frame_agent{agent_idx}_epd{episode}_step{step_count}.png"
 
                     skimage.io.imsave(image_path, img)

@@ -10,7 +10,9 @@ import time
 import gym
 import pybullet
 import pybullet_envs
+
 import matplotlib.pyplot as plt
+import skimage
 
 
 from mpi4py import MPI
@@ -199,12 +201,19 @@ def enjoy(argv):
                         env.unwrapped._render_width = 640
                         env.unwrapped._render_height = 480
 
-                    img = env.render(mode="rgb_array")
-                    plt.figure()
-                    plt.imshow(img)
-                    plt.savefig("./frames/frame_agent{}_pd{}_step{}.png".format(\
-                            agent_idx, episode, step_count))
-                    plt.close()
+                    if "BackAndForthEnv" in argv.env_name:
+                        img = env.render(mode="img")
+                    else:
+                        img = env.render(mode="rgb_array")
+
+                    #plt.figure()
+                    #plt.imshow(img)
+                    #plt.savefig("./frames/frame_agent{}_pd{}_step{}.png".format(\
+                    #        agent_idx, episode, step_count))
+                    #plt.close()
+                    image_path = f"./frames/frame_agent{agent_idx}_epd{episode}_step{step_count}.png"
+
+                    skimage.io.imsave(image_path, img)
 
                 time.sleep(0.01)
                 if step_count >= argv.max_steps:

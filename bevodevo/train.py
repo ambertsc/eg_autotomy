@@ -127,6 +127,9 @@ if __name__ == "__main__":
             help="performance threshold to use for early stopping", default=float("Inf"))
     parser.add_argument("-x", "--exp_name", type=str, \
             help="name of experiment", default="temp_exp")
+    parser.add_argument("-b", "--body_dim", type=int,\
+            help="body dim", \
+            default=8)
 
     args = parser.parse_args()
 

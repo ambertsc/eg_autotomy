@@ -10,7 +10,9 @@ import time
 import gym
 import pybullet
 import pybullet_envs
+
 import matplotlib.pyplot as plt
+import skimage
 
 
 from mpi4py import MPI
@@ -136,11 +138,15 @@ def enjoy(argv):
         if type(parameters) is dict:
             agent_args = {"dim_x": obs_dim, "dim_h": hid_dim, \
                     "dim_y": act_dim, "params": parameters["elite_0"]} 
+            if "body_dim" in dict(argv._get_kwargs()).keys():
+                agent_args["body_dim"] = argv.body_dim
             my_params = agent_args["params"]
             agent_args["params"] = None
         else:
             agent_args = {"dim_x": obs_dim, "dim_h": hid_dim, \
                     "dim_y": act_dim, "params": parameters} 
+            if "body_dim" in dict(argv._get_kwargs()).keys():
+                agent_args["body_dim"] = argv.body_dim
             my_params = agent_args["params"]
             agent_args["params"] = None
             if ".pt" in my_file_path:
@@ -195,12 +201,14 @@ def enjoy(argv):
                         env.unwrapped._render_width = 640
                         env.unwrapped._render_height = 480
 
-                    img = env.render(mode="rgb_array")
-                    plt.figure()
-                    plt.imshow(img)
-                    plt.savefig("./frames/frame_agent{}_pd{}_step{}.png".format(\
-                            agent_idx, episode, step_count))
-                    plt.close()
+                    if "BackAndForthEnv" in argv.env_name:
+                        img = env.render(mode="img")
+                    else:
+                        img = env.render(mode="rgb_array")
+
+                    image_path = f"./frames/frame_agent{agent_idx}_epd{episode}_step{step_count}.png"
+
+                    skimage.io.imsave(image_path, img)
 
                 time.sleep(0.01)
                 if step_count >= argv.max_steps:

@@ -15,5 +15,5 @@ register(
 register(
     id = 'BackAndForthEnv-v0',
     entry_point = 'eg_envs.back_and_forth_env:BackAndForthEnvClass',
-    max_episode_steps = 1024
+    max_episode_steps = 2048
 )

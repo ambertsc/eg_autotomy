@@ -16,6 +16,8 @@ class BackAndForthEnvClass(EvoGymBase):
     
     def __init__(self, body=None, connections=None, **kwargs):
 
+        self.max_episode_steps = 2048
+
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
         filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
         self.world = EvoWorld.from_json(filepath)
@@ -48,6 +50,7 @@ class BackAndForthEnvClass(EvoGymBase):
         
         self.setup_action_space()
 
+
         self.default_viewer.track_objects("robot") 
 
     def get_obs(self):
@@ -71,6 +74,7 @@ class BackAndForthEnvClass(EvoGymBase):
 
     def setup_action_space(self):
 
+        
         self.num_actuators = self.get_actuator_indices("robot").size 
 
         obs_size = self.get_obs().size
@@ -127,6 +131,8 @@ class BackAndForthEnvClass(EvoGymBase):
 
         elif self.mode and center_of_mass_2[0] <= self.goal[1]:
             reward += 1
+            time_bonus = self.max_episode_steps - self.get_time()
+            reward += 10 * time_bonus/self.max_episode_steps
             done = True
 
             info["end_1"] = 1
@@ -162,17 +168,15 @@ class BackAndForthEnvClass(EvoGymBase):
         if self.robot_body.sum() == 0:
             # no empty bodies
             self.robot_body = old_body
-        elif self.robot_body.max() <= 0:
+        elif self.robot_body.max() <= 2:
             # no passive robots
             self.robot_body = old_body
         elif not check_connected(self.robot_body):
             # no disconnected body plans
             self.robot_body = old_body
 
-
         self.robot_body = 1.0 * np.clip(self.robot_body, 0, 4)
         
-        self.remove_robot()
         self.add_robot(self.robot_body, connections=None)
 
     def reverse_direction(self, action):
@@ -182,18 +186,22 @@ class BackAndForthEnvClass(EvoGymBase):
         body_action = action[-self.robot_body_elements:]
         autotomy = 1.0 * (body_action > 0.5).reshape(self.robot_body.shape)
 
-        if self.allow_autotomy:
-            self.filter_robot_body(autotomy)
-
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
         filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
         self.world = EvoWorld.from_json(filepath)
 
-        self.add_robot(self.robot_body, connections=None)
+        if self.allow_autotomy:
+            self.filter_robot_body(autotomy)
+        else:
+            self.filter_robot_body(np.ones(self.robot_body.shape))
+
         self.goal_counter = np.array([0])
 
         super(BackAndForthEnvClass, self).__init__(self.world)
             
+        if "robot" not in self.world.objects.keys():
+            import pdb; pdb.set_trace()
+
         self.setup_action_space()
         self.default_viewer.track_objects("robot") 
 

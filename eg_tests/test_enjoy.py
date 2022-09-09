@@ -69,6 +69,9 @@ class TestEnjoy(unittest.TestCase):
         parser.add_argument("-a", "--num_agents", type=int,\
                 help="how many agents to evaluate", \
                 default=1)
+        parser.add_argument("-b", "--body_dim", type=int,\
+                help="body dim", \
+                default=8)
 
         args = parser.parse_args()
 

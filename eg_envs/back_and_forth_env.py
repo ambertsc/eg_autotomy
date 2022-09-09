@@ -16,6 +16,8 @@ class BackAndForthEnvClass(EvoGymBase):
     
     def __init__(self, body=None, connections=None, **kwargs):
 
+        self.max_episode_steps = 2048
+
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
         filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
         self.world = EvoWorld.from_json(filepath)
@@ -47,6 +49,7 @@ class BackAndForthEnvClass(EvoGymBase):
         super().__init__(self.world)
         
         self.setup_action_space()
+
 
         self.default_viewer.track_objects("robot") 
 
@@ -128,8 +131,8 @@ class BackAndForthEnvClass(EvoGymBase):
 
         elif self.mode and center_of_mass_2[0] <= self.goal[1]:
             reward += 1
-            time_bonus = self._max_episode_steps - self.get_time()
-            reward += 10 * time_bonus/self._max_episode_steps
+            time_bonus = self.max_episode_steps - self.get_time()
+            reward += 10 * time_bonus/self.max_episode_steps
             done = True
 
             info["end_1"] = 1

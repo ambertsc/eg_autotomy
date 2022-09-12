@@ -9,7 +9,7 @@ def exp_0x000(num_workers):
     performance_threshold = 36
     algo = "GeneticPopulation"
     policy = "MLPBodyPolicy"
-    seeds = [13, 1337, 42]
+    seeds = [1,2,3,4,5]
 
 
     for seed in seeds:

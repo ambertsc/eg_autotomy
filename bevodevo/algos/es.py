@@ -79,9 +79,6 @@ class ESPopulation:
                         action = np.nan_to_num(action, 0.0)
                         self.abort = True
 
-                    if (np.max(action) > self.env.action_space.high).any()\
-                            or (np.min(action) < self.env.action_space.low).any():
-                        action = np.clip(action, self.env.action_space.low.min(), self.env.action_space.high.max())
 
                 prev_obs = obs
                 try:

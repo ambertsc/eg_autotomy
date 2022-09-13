@@ -96,17 +96,20 @@ def train(argv):
     num_workers = argv.num_workers
 
     if "use_autotomy" in dict(argv._get_kwargs()).keys():
-        kwargs = {"allow_autotomy": argv.use_autotomy}
+        kwargs = dict(argv._get_kwargs())
+        kwargs["allow_autotomy"] = argv.use_autotomy
     else:
-        kwargs = {"allow_autotomy": 0}
+        kwargs = dict(argv._get_kwargs())
+        kwargs["allow_autotomy"] = 0
 
-    population = population_fn(policy_fn, num_workers=num_workers, **kwargs)
+    population = population_fn(policy_fn, **kwargs)
     
     population.train(argv)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Experiment parameters")
+
     parser.add_argument("-n", "--env_name", type=str, \
             help="name of environemt", default="InvertedPendulumBulletEnv-v0")
     parser.add_argument("-p", "--population_size", type=int,\
@@ -130,6 +133,9 @@ if __name__ == "__main__":
     parser.add_argument("-b", "--body_dim", type=int,\
             help="body dim", \
             default=8)
+
+    parser.add_argument("-o", "--goal", type=int, nargs="+", default=[48, 16],\
+            help="displacement objectives: forward (g[0]) and reverse (g[1])")
 
     args = parser.parse_args()
 

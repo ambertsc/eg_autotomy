@@ -171,7 +171,7 @@ class BackAndForthEnvClass(EvoGymBase):
         elif self.robot_body.max() <= 2:
             # no passive robots
             self.robot_body = old_body
-        elif not check_connected(self.robot_body):
+        if not check_connected(self.robot_body):
             # no disconnected body plans
             self.robot_body = old_body
 

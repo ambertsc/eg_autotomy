@@ -72,6 +72,8 @@ class TestEnjoy(unittest.TestCase):
         parser.add_argument("-b", "--body_dim", type=int,\
                 help="body dim", \
                 default=8)
+        parser.add_argument("-u", "--use_autotomy", type=int, default=1,\
+                help="allow autotomy in training (for envs that support it)")
 
         args = parser.parse_args()
 

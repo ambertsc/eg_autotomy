@@ -54,29 +54,6 @@ class MLPBodyPolicy(MLPPolicy):
 
         return act.detach().cpu().numpy()
     
-    def set_autotomy(self, autotomy):
-
-         autotomy_map = np.round(autotomy)
-         autotomy_clipped = np.clip(autotomy_map, 0,1.)
-
-         self.autotomy = autotomy_clipped
-
-
-    def init_body(self):
-
-        self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
-
-        while self.body.max() < 3:
-            # avoid a bot with no actuators
-            self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
-
-        temp_env = gym.make("BackAndForthEnv-v0", body=self.body)
-        self.active_action_dim = temp_env.action_space.sample().ravel().shape[0]
-
-        my_autotomy = np.random.randint(0,2, size=self.body.shape)
-        self.set_autotomy(my_autotomy)
-
-        self.body_elements = self.autotomy.shape[0] * self.autotomy.shape[1]
 
     def get_body(self):
 
@@ -114,6 +91,29 @@ class MLPBodyPolicy(MLPPolicy):
     def get_autotomy(self):
 
         return self.autotomy
+
+    def set_autotomy(self, autotomy):
+
+         autotomy_map = np.round(autotomy)
+         autotomy_clipped = np.clip(autotomy_map, 0,1.)
+
+         self.autotomy = autotomy_clipped
+
+    def init_body(self):
+
+        self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
+
+        while self.body.max() < 3:
+            # avoid a bot with no actuators
+            self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
+
+        temp_env = gym.make("BackAndForthEnv-v0", body=self.body)
+        self.active_action_dim = temp_env.action_space.sample().ravel().shape[0]
+
+        my_autotomy = np.random.randint(0,2, size=self.body.shape)
+        self.set_autotomy(my_autotomy)
+
+        self.body_elements = self.autotomy.shape[0] * self.autotomy.shape[1]
 
     def get_params(self):
         params = np.array([])
@@ -154,9 +154,6 @@ class MLPBodyPolicy(MLPPolicy):
                 + reduce(lambda x,y: x*y, self.autotomy.shape)
         temp = my_params[param_start:param_stop]
         self.set_autotomy(temp)
-
-
-
 
 class HebbianMLPBody(HebbianMLP, MLPBodyPolicy):
 

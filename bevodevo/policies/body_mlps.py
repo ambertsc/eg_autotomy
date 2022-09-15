@@ -47,10 +47,21 @@ class MLPBodyPolicy(MLPPolicy):
         else:
             act = y
 
-        act = act[:,:self.number_actuators]
+        act = act[:,:self.active_action_dim]
+        act[:,-self.body_elements:] = torch.tensor(\
+                self.get_autotomy().ravel()[None,:], dtype=act.dtype)
+
 
         return act.detach().cpu().numpy()
     
+    def set_autotomy(self, autotomy):
+
+         autotomy_map = np.round(autotomy)
+         autotomy_clipped = np.clip(autotomy_map, 0,1.)
+
+         self.autotomy = autotomy_clipped
+
+
     def init_body(self):
 
         self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
@@ -60,23 +71,17 @@ class MLPBodyPolicy(MLPPolicy):
             self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
 
         temp_env = gym.make("BackAndForthEnv-v0", body=self.body)
-        self.number_actuators = temp_env.action_space.sample().ravel().shape[0]
+        self.active_action_dim = temp_env.action_space.sample().ravel().shape[0]
+
+        my_autotomy = np.random.randint(0,2, size=self.body.shape)
+        self.set_autotomy(my_autotomy)
+
+        self.body_elements = self.autotomy.shape[0] * self.autotomy.shape[1]
 
     def get_body(self):
 
         return self.body
         #, self.connections
-
-    def get_params(self):
-        params = np.array([])
-
-        for param in self.layers.named_parameters():
-            params = np.append(params, param[1].detach().numpy().ravel())
-
-
-        params = np.append(params, self.body.ravel())
-
-        return params
 
     def set_body(self, new_body):
         
@@ -106,6 +111,23 @@ class MLPBodyPolicy(MLPPolicy):
         else:
             self.body = np.clip(np.uint8(new_body), 0,4).reshape(self.body.shape)
 
+    def get_autotomy(self):
+
+        return self.autotomy
+
+    def get_params(self):
+        params = np.array([])
+
+        for param in self.layers.named_parameters():
+            params = np.append(params, param[1].detach().numpy().ravel())
+
+
+        params = np.append(params, self.get_body().ravel())
+        params = np.append(params, self.get_autotomy().ravel())
+
+        return params
+
+
     def set_params(self, my_params):
 
         param_start = 0
@@ -119,12 +141,21 @@ class MLPBodyPolicy(MLPPolicy):
 
             param_start = param_stop
 
+        # set the body plan
         param_stop = param_start \
                 + reduce(lambda x,y: x*y, self.body.shape)
 
         temp = my_params[param_start:param_stop]
-
         self.set_body(temp)
+
+        # set the body autotomy plan
+        param_start = param_stop
+        param_stop = param_start \
+                + reduce(lambda x,y: x*y, self.autotomy.shape)
+        temp = my_params[param_start:param_stop]
+        self.set_autotomy(temp)
+
+
 
 
 class HebbianMLPBody(HebbianMLP, MLPBodyPolicy):
@@ -143,6 +174,7 @@ class HebbianMLPBody(HebbianMLP, MLPBodyPolicy):
                 params = np.append(params, param[1].detach().numpy().ravel())
 
         params = np.append(params, self.body.ravel())
+        params = np.append(params, self.get_autotomy().ravel())
 
         return params
 
@@ -176,6 +208,13 @@ class HebbianMLPBody(HebbianMLP, MLPBodyPolicy):
         temp = my_params[param_start:param_stop]
         self.set_body(temp)
 
+        # set the body autotomy plan
+        param_start = param_stop
+        param_stop = param_start \
+                + reduce(lambda x,y: x*y, self.autotomy.shape)
+        temp = my_params[param_start:param_stop]
+        self.set_autotomy(temp)
+
 
 class ABCHebbianMLPBody(ABCHebbianMLP, MLPBodyPolicy):
 
@@ -199,6 +238,7 @@ class ABCHebbianMLPBody(ABCHebbianMLP, MLPBodyPolicy):
                 params = np.append(params, param[1].detach().numpy().ravel())
 
         params = np.append(params, self.body.ravel())
+        params = np.append(params, self.get_autotomy().ravel())
 
         return params
 
@@ -262,4 +302,11 @@ class ABCHebbianMLPBody(ABCHebbianMLP, MLPBodyPolicy):
 
         temp = my_params[param_start:param_stop]
         self.set_body(temp)
+
+        # set the body autotomy plan
+        param_start = param_stop
+        param_stop = param_start \
+                + reduce(lambda x,y: x*y, self.autotomy.shape)
+        temp = my_params[param_start:param_stop]
+        self.set_autotomy(temp)
 

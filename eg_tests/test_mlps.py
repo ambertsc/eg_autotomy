@@ -76,7 +76,13 @@ class TestMLPBodyPolicy(TestMLPPolicy):
         
         my_params = self.policy.get_params()
 
-        new_params = np.random.randint(1, 4, my_params.shape)
+        new_params = np.random.randint(0, 4, my_params.shape)
+
+        my_body = self.policy.get_body().ravel()
+        my_autotomy = self.policy.get_autotomy().ravel()
+
+        new_params[-2*self.policy.body_elements:-self.policy.body_elements] = my_body
+        new_params[-self.policy.body_elements:] = my_autotomy
 
         self.policy.set_params(new_params)
         recovered_params = self.policy.get_params()
@@ -90,6 +96,38 @@ class TestMLPBodyPolicy(TestMLPPolicy):
         recovered_params = self.policy.get_params()
 
         self.assertNotIn(False, my_params == recovered_params)
+
+    def test_autotomy(self):
+
+        my_params = self.policy.get_params()
+        self.policy.reset()
+
+        temp_env = gym.make("BackAndForthEnv-v0", body=self.policy.body)
+        obs = temp_env.reset()
+
+        action = self.policy.get_action(obs)
+
+        my_autotomy = self.policy.get_autotomy()
+
+        action_autotomy = action[:, -self.policy.body_elements:]
+
+        self.assertEqual(2, np.unique(action_autotomy).shape[0])
+        self.assertEqual(2, np.unique(my_autotomy).shape[0])
+        self.assertEqual(0, (my_autotomy.ravel() - action_autotomy.squeeze()).sum())
+
+    def test_body(self):
+
+        my_params = self.policy.get_params()
+        self.policy.reset()
+
+        temp_env = gym.make("BackAndForthEnv-v0", body=self.policy.body)
+        my_body = self.policy.get_body()
+        my_params_body = my_params[\
+                -2*self.policy.body_elements:-self.policy.body_elements]
+
+        self.assertLessEqual(5, np.unique(my_body).shape[0])
+        self.assertLessEqual(5, np.unique(my_params_body).shape[0])
+        self.assertEqual(0, (my_body.ravel() - my_params_body.squeeze()).sum())
 
 class TestHebbianMLPBodyPolicy(TestMLPBodyPolicy):
 

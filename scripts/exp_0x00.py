@@ -6,6 +6,7 @@ def exp_0x000(num_workers):
     
     population_size = 64
     generations = 100
+    body_dim = 16
     performance_threshold = 36
     algo = "GeneticPopulation"
     policy = "MLPBodyPolicy"
@@ -15,12 +16,13 @@ def exp_0x000(num_workers):
     for seed in seeds:
         for use_autotomy in [0,1]:
 
-            exp_tag = f"{algo}_{policy}_p{population_size}_g{generations}_s{seed}_w{num_workers}_u{use_autotomy}"
+            exp_tag = f"{algo}_{policy}_p{population_size}_g{generations}_s{seed}_w{num_workers}_u{use_autotomy}_b{body_dim}"
+
 
             exp_cmd = f"python -m bevodevo.train -n BackAndForthEnv-v0 "\
                     f" -p {population_size} -a {algo} -pi {policy} "\
                     f" -g {generations} -x {exp_tag} -s {seed} -u {use_autotomy}"\
-                    f" -w {num_workers}"
+                    f" -w {num_workers} -b {body_dim}"
 
             print("begin experiment")
             print(exp_cmd)

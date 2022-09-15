@@ -168,7 +168,8 @@ def enjoy(argv):
 
             body = agent.get_body()
 
-            env = gym.make(id=env_name, body=body) 
+            env = gym.make(id=env_name, body=body, \
+                    allow_autotomy=argv.use_autotomy) 
         else:
             env = gym.make(id=env_name)
 
@@ -246,6 +247,8 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--num_agents", type=int,\
             help="how many agents to evaluate", \
             default=1)
+    parser.add_argument("-u", "--use_autotomy", type=int, default=1,\
+            help="allow autotomy in training (for envs that support it)")
 
 
 

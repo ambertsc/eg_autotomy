@@ -110,32 +110,32 @@ def train(argv):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Experiment parameters")
 
-    parser.add_argument("-n", "--env_name", type=str, \
-            help="name of environemt", default="InvertedPendulumBulletEnv-v0")
-    parser.add_argument("-p", "--population_size", type=int,\
-            help="number of individuals in population", default=64)
-    parser.add_argument("-w", "--num_workers", type=int,\
-            help="number of cpu thread workers", default=0)
     parser.add_argument("-a", "--algorithm", type=str,\
             help="name of es learning algo", default="ESPopulation")
-    parser.add_argument("-pi", "--policy", type=str,\
-            help="name of policy architecture", default="MLPPolicy")
-    parser.add_argument("-g", "--generations", type=int,\
-            help="number of generations", default=50)
-    parser.add_argument("-s", "--seeds", type=int, nargs="+", default=42,\
-            help="seed for initializing pseudo-random number generator")
-    parser.add_argument("-u", "--use_autotomy", type=int, default=1,\
-            help="allow autotomy in training (for envs that support it)")
-    parser.add_argument("-t", "--performance_threshold", type=float,\
-            help="performance threshold to use for early stopping", default=float("Inf"))
-    parser.add_argument("-x", "--exp_name", type=str, \
-            help="name of experiment", default="temp_exp")
     parser.add_argument("-b", "--body_dim", type=int,\
             help="body dim", \
             default=8)
-
+    parser.add_argument("-g", "--generations", type=int,\
+            help="number of generations", default=50)
+    parser.add_argument("-n", "--env_name", type=str, \
+            help="name of environemt", default="InvertedPendulumBulletEnv-v0")
     parser.add_argument("-o", "--goal", type=int, nargs="+", default=[48, 16],\
             help="displacement objectives: forward (g[0]) and reverse (g[1])")
+    parser.add_argument("-p", "--population_size", type=int,\
+            help="number of individuals in population", default=64)
+    parser.add_argument("-pi", "--policy", type=str,\
+            help="name of policy architecture", default="MLPPolicy")
+    parser.add_argument("-s", "--seeds", type=int, nargs="+", default=42,\
+            help="seed for initializing pseudo-random number generator")
+    parser.add_argument("-w", "--num_workers", type=int,\
+            help="number of cpu thread workers", default=0)
+    parser.add_argument("-t", "--performance_threshold", type=float,\
+            help="performance threshold to use for early stopping", default=float("Inf"))
+    parser.add_argument("-u", "--use_autotomy", type=int, default=1,\
+            help="allow autotomy in training (for envs that support it)")
+    parser.add_argument("-x", "--exp_name", type=str, \
+            help="name of experiment", default="temp_exp")
+
 
     args = parser.parse_args()
 

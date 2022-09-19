@@ -27,6 +27,14 @@ class MLPBodyPolicy(MLPPolicy):
         else:
             self.body_dim = 8
 
+        if "mode" in kwargs.keys():
+            self.mode = kwargs["mode"]
+            self.body_dim = 5
+        else:
+            # coevo with body
+            self.mode = 0
+            self.body_dim = 5
+            
         self.init_body()
 
         super().__init__(**kwargs)
@@ -54,6 +62,40 @@ class MLPBodyPolicy(MLPPolicy):
 
         return act.detach().cpu().numpy()
     
+
+    def given_body(self, mode=1):
+        """
+        return a predertimined robot body plan
+        mode 1 - square
+        mode 2 - table
+        mode 3 - comb
+        """
+
+        if mode == 3:
+            # comb
+            new_body = np.array([[0, 0, 0, 0, 0],\
+            [0, 0, 0, 0, 0],\
+            [1, 1, 1, 1, 1],\
+            [4, 3, 4, 3, 4],\
+            [2, 0, 4, 0, 2.]])
+        elif mode == 2:
+            # table
+            new_body = np.array([[1, 1, 1, 1, 1.],\
+            [1, 3, 3, 3, 1],\
+            [4, 3, 3, 3, 4],\
+            [4, 0, 0, 0, 4],\
+            [2, 0, 0, 0, 2]])
+        elif self.mode == 0:
+            new_body = self.body
+        else:
+            # square
+            new_body = np.array([[4., 4, 4, 4, 4],\
+            [4, 3, 3, 3, 1],\
+            [4, 3, 3, 3, 4],\
+            [4, 3, 3, 3, 4],\
+            [4, 4, 4, 4, 4]])
+
+        return new_body
 
     def get_body(self):
 
@@ -101,11 +143,14 @@ class MLPBodyPolicy(MLPPolicy):
 
     def init_body(self):
 
-        self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
-
-        while self.body.max() < 3:
-            # avoid a bot with no actuators
+        if self.mode == 0:
             self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
+            while self.body.max() < 3:
+                # avoid a bot with no actuators
+                self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
+        else:
+            self.body, self.connections = self.given_body(mode=self.mode), None
+
 
         temp_env = gym.make("BackAndForthEnv-v0", body=self.body)
         self.active_action_dim = temp_env.action_space.sample().ravel().shape[0]
@@ -145,8 +190,11 @@ class MLPBodyPolicy(MLPPolicy):
         param_stop = param_start \
                 + reduce(lambda x,y: x*y, self.body.shape)
 
-        temp = my_params[param_start:param_stop]
-        self.set_body(temp)
+        if self.mode == 0:
+            updated_body = my_params[param_start:param_stop]
+        else:
+            updated_body = self.given_body(mode=self.mode)
+        self.set_body(updated_body)
 
         # set the body autotomy plan
         param_start = param_stop

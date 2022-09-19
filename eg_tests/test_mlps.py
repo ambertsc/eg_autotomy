@@ -129,6 +129,40 @@ class TestMLPBodyPolicy(TestMLPPolicy):
         self.assertLessEqual(5, np.unique(my_params_body).shape[0])
         self.assertEqual(0, (my_body.ravel() - my_params_body.squeeze()).sum())
 
+class TestGivenBody(unittest.TestCase):
+
+    def setUp(self, mode=0):
+        self.policy = MLPBodyPolicy(params=None, mode=mode)
+        self.mode = mode
+
+    def test_given_body(self):
+        self.policy.reset()
+        
+        my_body = self.policy.get_body()
+        my_body_should_be = self.policy.given_body(mode=self.mode)
+
+        self.assertEqual(0, (my_body.ravel() - my_body_should_be.ravel()).sum())
+        self.assertEqual(my_body.shape, my_body_should_be.shape)
+        
+class TestGivenBody1(TestGivenBody):
+
+    def setUp(self, mode=1):
+        self.policy = MLPBodyPolicy(params=None, mode=mode)
+        self.mode = mode
+
+class TestGivenBody2(TestGivenBody):
+
+    def setUp(self, mode=2):
+        self.policy = MLPBodyPolicy(params=None, mode=mode)
+        self.mode = mode
+
+class TestGivenBody3(TestGivenBody):
+
+    def setUp(self, mode=3):
+        self.policy = MLPBodyPolicy(params=None, mode=mode)
+        self.mode = mode
+
+
 class TestHebbianMLPBodyPolicy(TestMLPBodyPolicy):
 
     def setUp(self):

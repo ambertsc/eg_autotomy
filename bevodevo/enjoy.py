@@ -237,6 +237,8 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--file_path", type=str,\
             help="file path to model parameters", \
             default="./results/test_exp/")
+    parser.add_argument("-m", "--mode", default=0,\
+            help="mode (0,1,2, or 3) for body co-evolution")
     parser.add_argument("-ms", "--max_steps", type=int,\
             help="maximum number of steps per episode", default=4000)
     parser.add_argument("-n", "--env_name", type=str, \

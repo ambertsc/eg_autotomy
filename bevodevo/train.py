@@ -117,6 +117,8 @@ if __name__ == "__main__":
             default=8)
     parser.add_argument("-g", "--generations", type=int,\
             help="number of generations", default=50)
+    parser.add_argument("-m", "--mode", default=0,\
+            help="mode (0,1,2, or 3) for body co-evolution")
     parser.add_argument("-n", "--env_name", type=str, \
             help="name of environemt", default="InvertedPendulumBulletEnv-v0")
     parser.add_argument("-o", "--goal", type=int, nargs="+", default=[48, 16],\

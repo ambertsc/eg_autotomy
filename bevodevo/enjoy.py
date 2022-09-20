@@ -136,11 +136,16 @@ def enjoy(argv):
     for agent_idx in range(min([argv.num_agents, elite_keep])):
 
         if type(parameters) is dict:
+            kwargs = dict(argv._get_kwargs())
             agent_args = {"dim_x": obs_dim, "dim_h": hid_dim, \
                     "dim_y": act_dim, "params": parameters["elite_0"]} 
-            if "body_dim" in dict(argv._get_kwargs()).keys():
+            if "body_dim" in kwargs.keys(): 
                 agent_args["body_dim"] = argv.body_dim
             my_params = agent_args["params"]
+
+            if "mode" in kwargs.keys():
+                agent_args["mode"] = kwargs["mode"]
+
             agent_args["params"] = None
         else:
             agent_args = {"dim_x": obs_dim, "dim_h": hid_dim, \

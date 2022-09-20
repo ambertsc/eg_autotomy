@@ -28,12 +28,11 @@ class MLPBodyPolicy(MLPPolicy):
             self.body_dim = 8
 
         if "mode" in kwargs.keys():
-            self.mode = kwargs["mode"]
+            self.mode = int(kwargs["mode"])
             self.body_dim = 5
         else:
             # coevo with body
             self.mode = 0
-            self.body_dim = 5
             
         self.init_body()
 
@@ -151,7 +150,6 @@ class MLPBodyPolicy(MLPPolicy):
         else:
             self.body, self.connections = self.given_body(mode=self.mode), None
 
-
         temp_env = gym.make("BackAndForthEnv-v0", body=self.body)
         self.active_action_dim = temp_env.action_space.sample().ravel().shape[0]
 
@@ -164,6 +162,7 @@ class MLPBodyPolicy(MLPPolicy):
         params = np.array([])
 
         for param in self.layers.named_parameters():
+            self.body_dim = 5
             params = np.append(params, param[1].detach().numpy().ravel())
 
 
@@ -177,6 +176,7 @@ class MLPBodyPolicy(MLPPolicy):
 
         param_start = 0
         for name, param in self.named_parameters():
+
 
             param_stop = param_start + reduce(lambda x,y: x*y, param.shape)
 

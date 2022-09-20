@@ -12,10 +12,10 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--filepath", type=str, \
            help="filepath to experiment folder", \
            default="./results/test_exp/")
+    parser.add_argument("-s", "--save_fig", type=bool, default=False)
     parser.add_argument("-x", "--independent_variable", type=str,\
            default="wall_time", \
            help="x variable options: wall_time, total_env_interacts, generation")
-    parser.add_argument("-s", "--save_fig", type=bool, default=False)
 
     args = parser.parse_args()
 

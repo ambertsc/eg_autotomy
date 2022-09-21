@@ -533,6 +533,8 @@ class ESPopulation:
                         "dim_y": act_dim, "params": None} 
                 if "body_dim" in self.kwargs.keys():
                     agent_args["body_dim"] = self.kwargs["body_dim"]
+                if "mode" in self.kwargs.keys():
+                    agent_args["mode"] = self.kwargs["mode"]
                 self.population.append(self.policy_fn(**agent_args))
                 self.population[-1].set_params(params_list[ii])
             

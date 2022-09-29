@@ -102,7 +102,7 @@ def train(**kwargs):
 
     population = population_fn(policy_fn, **kwargs)
     
-    population.train(argv)
+    population.train(**kwargs)
 
 
 if __name__ == "__main__":

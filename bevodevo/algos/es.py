@@ -279,9 +279,9 @@ class ESPopulation:
             os._exit(0)
 
         if rank == 0:
-            self.mantle(args)
+            self.mantle(**kwargs)
         else:
-            self.arm(args)
+            self.arm(**kwargs)
 
     def get_distribution(self):
 
@@ -447,6 +447,11 @@ class ESPopulation:
                 results["max_fitness"].append(my_max)
                 results["std_dev_fitness"].append(my_std_dev)
 
+                results["entry_point"] = kwargs["entry_point"]
+                results["git_hash"] = kwargs["git_hash"] 
+
+
+
                 np.save("results/{}/progress_{}_s{}.npy".format(kwargs["exp_name"], exp_id, seed),\
                         results, allow_pickle=True)
 
@@ -494,9 +499,9 @@ class ESPopulation:
             print("send shutown signal to worker {}".format(cc))
             comm.send(0, dest=cc)
 
-    def arm(self, args):
+    def arm(self, **kwargs):
  
-        env_name = args.env_name 
+        env_name = kwargs["env_name"] 
         
         self.env_fn = gym.make 
         self.env_args = env_name 

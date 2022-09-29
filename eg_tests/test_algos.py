@@ -1,5 +1,7 @@
 import os
 import argparse
+import subprocess
+import sys
 
 import unittest
 
@@ -59,7 +61,35 @@ class TestESPopulation(unittest.TestCase):
         if type(args.seeds) is not list:
             args.seeds = [args.seeds]
 
-        self.population.mantle(args)
+        kwargs = dict(args._get_kwargs())
+
+        # use subprocess to get the current git hash, store
+        hash_command = ["git", "rev-parse", "--verify", "HEAD"]
+        git_hash = subprocess.check_output(hash_command)
+
+        # store the command-line call for this experiment
+        entry_point = []
+        entry_point.append(os.path.split(sys.argv[0])[1])
+        args_list = sys.argv[1:]
+
+        sorted_args = []
+        for aa in range(0, len(args_list)):
+
+            if "-" in args_list[aa]:
+                sorted_args.append([args_list[aa]])
+            else: 
+                sorted_args[-1].append(args_list[aa])
+
+        sorted_args.sort()
+        entry_point = "python -m symr.benchmark "
+
+        for elem in sorted_args:
+            entry_point += " " + " ".join(elem)
+
+        kwargs["entry_point"] = entry_point 
+        kwargs["git_hash"] = git_hash.decode("utf8")[:-1]
+
+        self.population.mantle(**kwargs)
 
 
 class TestPGESPopulation(TestESPopulation):

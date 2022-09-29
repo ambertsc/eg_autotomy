@@ -271,30 +271,30 @@ class ESPopulation:
             return "child"
 
 
-    def train(self, args):
+    def train(self, **kwargs):
 
-        my_num_workers = self.num_workers
+        my_num_workers = kwargs["num_workers"]
 
         if self.mpi_fork(my_num_workers) == "parent":
             os._exit(0)
 
         if rank == 0:
-            self.mantle(args)
+            self.mantle(**kwargs)
         else:
-            self.arm(args)
+            self.arm(**kwargs)
 
     def get_distribution(self):
 
         return [np.zeros((self.population[0].num_params)),\
                 np.ones(self.population[0].num_params)]
 
-    def mantle(self, args):
+    def mantle(self, **kwargs):
 
-        env_name = args.env_name 
-        max_generations = args.generations 
-        population_size = args.population_size 
+        env_name = kwargs["env_name"]
+        max_generations = kwargs["generations"] 
+        population_size = kwargs["population_size"] 
 
-        num_worker = args.num_workers
+        num_worker = kwargs["num_workers"]
         disp_every = max(max_generations // 100, 1)
         save_every = max(max_generations // 20, 1)
 
@@ -303,8 +303,8 @@ class ESPopulation:
 
         hid_dim = 16 #[32, 32] #TODO: allow hid_dims to be user-defined args.hid_dims
 
-        seeds = args.seeds
-        self.threshold = args.performance_threshold
+        seeds = kwargs["seeds"]
+        self.threshold = kwargs["performance_threshold"]
 
         self.env = self.env_fn(self.env_args, **self.kwargs) 
         obs_dim = self.env.observation_space.shape
@@ -354,10 +354,10 @@ class ESPopulation:
 
             # prepare performance logging
 
-            exp_id = args.env_name + "_" + args.algorithm[0:6] + str(int(time.time())) 
+            exp_id = kwargs["env_name"] + "_" + kwargs["algorithm"][0:6] + str(int(time.time())) 
             res_dir = os.listdir("./results/")
-            if args.exp_name not in res_dir:
-                os.mkdir("./results/{}".format(args.exp_name))
+            if kwargs["exp_name"] not in res_dir:
+                os.mkdir("./results/{}".format(kwargs["exp_name"]))
 
             results = {"wall_time": []}
             results["total_env_interacts"] = []
@@ -366,7 +366,10 @@ class ESPopulation:
             results["mean_fitness"] = []
             results["max_fitness"] = []
             results["std_dev_fitness"] = []
-            results["args"] = str(args)
+            results["args"] = str(kwargs)
+
+            results["entry_point"] = kwargs["entry_point"]
+            results["git_hash"] = kwargs["git_hash"] 
 
             fitness_list = []
             t0 = time.time()
@@ -447,7 +450,8 @@ class ESPopulation:
                 results["max_fitness"].append(my_max)
                 results["std_dev_fitness"].append(my_std_dev)
 
-                np.save("results/{}/progress_{}_s{}.npy".format(args.exp_name, exp_id, seed),\
+
+                np.save("results/{}/progress_{}_s{}.npy".format(kwargs["exp_name"], exp_id, seed),\
                         results, allow_pickle=True)
 
                 if my_max >= self.threshold:
@@ -467,7 +471,7 @@ class ESPopulation:
 
                     torch.save(self.elite_pop[0].state_dict(), \
                             "results/{}/best_agent_{}_gen_{}_s{}.pt"\
-                            .format(args.exp_name, exp_id, generation, seed))
+                            .format(kwargs["exp_name"], exp_id, generation, seed))
 
                     if self.elitism:
 
@@ -483,7 +487,7 @@ class ESPopulation:
 
                     elite_params["env_name"] = env_name
                     np.save("results/{}/elite_pop_{}_gen_{}_s{}".\
-                            format(args.exp_name, exp_id, generation, seed),\
+                            format(kwargs["exp_name"], exp_id, generation, seed),\
                             elite_params)
 
                 generation += 1
@@ -494,9 +498,9 @@ class ESPopulation:
             print("send shutown signal to worker {}".format(cc))
             comm.send(0, dest=cc)
 
-    def arm(self, args):
+    def arm(self, **kwargs):
  
-        env_name = args.env_name 
+        env_name = kwargs["env_name"] 
         
         self.env_fn = gym.make 
         self.env_args = env_name 

@@ -268,7 +268,7 @@ if __name__ == "__main__":
     parser.add_argument("-ms", "--max_steps", type=int,\
             help="maximum number of steps per episode", default=4000)
     parser.add_argument("-n", "--env_name", type=str, \
-            help="name of environemt", default="InvertedPendulumBulletEnv-v0")
+            help="name of environemt", default="BackAndForthEnv-v0")
     parser.add_argument("-nr", "--no_render", type=bool,\
             help="don't render", default=False)
     parser.add_argument("-pi", "--policy", type=str,\

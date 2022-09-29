@@ -1,7 +1,15 @@
 import os
+import argparse
 
 
 if __name__ == "__main__":
+    
+    parser = argparse.ArgumentParser("add a commit message to include")
+
+    parser.add_argument("-m", "--message", type=str, default="",\
+            help="(optional) add a message to prepend to commit message")
+
+    args = parser.parse_args()
 
     test_command = "coverage run -m eg_tests.test_all"
     coverage_command = "coverage report -m > coverage.txt"
@@ -19,7 +27,7 @@ if __name__ == "__main__":
             if "TOTAL" in line:
                 summary = line
 
-    commit_command = f"git commit -m 'test commit summary: {summary}'"
+    commit_command = f"git commit -m '{args.message} test commit summary: {summary}'"
 
     print(git_command)
     print(commit_command)

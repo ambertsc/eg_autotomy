@@ -32,6 +32,7 @@ from bevodevo.algos.ga import GeneticPopulation
 from bevodevo.algos.random_search import RandomSearch
 
 import eg_envs
+from eg_auto.helpers import make_gif
 
 def enjoy(argv):
 
@@ -212,7 +213,7 @@ def enjoy(argv):
                     else:
                         img = env.render(mode="rgb_array")
 
-                    image_path = f"./frames/frame_agent{agent_idx}_epd{episode}_step{step_count}.png"
+                    image_path = f"./frames/frame_agent{agent_idx}_epd{episode}_step{str(step_count).zfill(4)}.png"
 
                     skimage.io.imsave(image_path, img)
 
@@ -226,6 +227,13 @@ def enjoy(argv):
         print("reward stats for elite {} over {} epds:".format(agent_idx, argv.episodes))
         print("mean rew: {:.3e}, +/- {:.3e} std. dev.".format(np.mean(epd_rewards), np.std(epd_rewards)))
         print("max rew: {:.3e}, min rew: {:.3e}".format(np.max(epd_rewards), np.min(epd_rewards)))
+
+        if argv.save_gif:
+            gif_tag = os.path.split(argv.file_path)[-1]
+
+            make_gif(tag=gif_tag)
+
+            
 
         env.close()
     
@@ -242,6 +250,8 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--file_path", type=str,\
             help="file path to model parameters", \
             default="./results/test_exp/")
+    parser.add_argument("-g", "--save_gif", type=int, default=0,\
+            help="1 - save gif to ./assets, 0 - do not")
     parser.add_argument("-m", "--mode", default=0,\
             help="mode (0,1,2, or 3) for body co-evolution")
     parser.add_argument("-ms", "--max_steps", type=int,\

@@ -35,71 +35,69 @@ import eg_envs
 #from bevodevo.algos.dqn import DQN
 
 
-def train(argv):
+def train(**kwargs):
     
-    if "gatedrnn" in argv.policy.lower():
+    if "gatedrnn" in kwargs["policy"].lower():
         policy_fn = GatedRNNPolicy
-        argv.policy = "GatedRNNPolicy" 
-    elif "impala" in argv.policy.lower():
+        kwargs["policy"] = "GatedRNNPolicy" 
+    elif "impala" in kwargs["policy"].lower():
         policy_fn = ImpalaCNNPolicy
-        argv.policy = "ImpalaCNNPolicy"
-    elif "cppnmlp" in argv.policy.lower():
+        kwargs["policy"] = "ImpalaCNNPolicy"
+    elif "cppnmlp" in kwargs["policy"].lower():
         policy_fn = CPPNMLPPolicy
-        arg.policy = "CPPNMLPPolicy"
-    elif "abchebbianmlpbody" in argv.policy.lower():
+        kwargs["policy"] = "CPPNMLPPolicy"
+    elif "abchebbianmlpbody" in kwargs["policy"].lower():
         policy_fn = ABCHebbianMLPBody
-        argv.policy = "ABCHebbianMLPBody"
-    elif "abchebbianmlp" in argv.policy.lower():
+        kwargs["policy"] = "ABCHebbianMLPBody"
+    elif "abchebbianmlp" in kwargs["policy"].lower():
         policy_fn = ABCHebbianMLP
-        argv.policy = "ABCHebbianMLP"
-    elif "cppnhebbianmlp" in argv.policy.lower():
+        kwargs["policy"] = "ABCHebbianMLP"
+    elif "cppnhebbianmlp" in kwargs["policy"].lower():
         policy_fn = CPPNHebbianMLP
-        argv.policy = "CPPNHebbianMLP"
-    elif "hebbiancamlp2" in argv.policy.lower():
+        kwargs["policy"] = "CPPNHebbianMLP"
+    elif "hebbiancamlp2" in kwargs["policy"].lower():
         policy_fn = HebbianCAMLP2
-    elif "hebbiancamlp" in argv.policy.lower():
+    elif "hebbiancamlp" in kwargs["policy"].lower():
         policy_fn = HebbianCAMLP
-    elif "hebbianmlpbody" in argv.policy.lower():
+    elif "hebbianmlpbody" in kwargs["policy"].lower():
         policy_fn = HebbianMLPBody
-        argv.policy = "HebbianMLPBody"
-    elif "hebbianmlp" in argv.policy.lower():
+        kwargs["policy"] = "HebbianMLPBody"
+    elif "hebbianmlp" in kwargs["policy"].lower():
         policy_fn = HebbianMLP
-        argv.policy = "HebbianMLP"
-    elif "mlpbodypolicy" in argv.policy.lower():
+        kwargs["policy"] = "HebbianMLP"
+    elif "mlpbodypolicy" in kwargs["policy"].lower():
         policy_fn = MLPBodyPolicy
-        argv.policy = "MLPBodyPolicy"
-    elif "mlppolicy" in argv.policy.lower():
+        kwargs["policy"] = "MLPBodyPolicy"
+    elif "mlppolicy" in kwargs["policy"].lower():
         policy_fn = MLPPolicy
-        argv.policy = "MLPPolicy"
+        kwargs["policy"] = "MLPPolicy"
     else:
         assert False, "policy not found, check spelling?"
 
-    if "ESPopulation" == argv.algorithm:
+    if "ESPopulation" == kwargs["algorithm"]:
         population_fn = ESPopulation
-    elif "CMAESPopulation" == argv.algorithm:
+    elif "CMAESPopulation" == kwargs["algorithm"]:
         population_fn = CMAESPopulation
-    elif "Genetic" in argv.algorithm:
+    elif "Genetic" in kwargs["algorithm"]:
         population_fn = GeneticPopulation
-    elif "PGES" in argv.algorithm:
+    elif "PGES" in kwargs["algorithm"]:
         population_fn = PGESPopulation
-    elif "NES" in argv.algorithm:
+    elif "NES" in kwargs["algorithm"]:
         population_fn = NESPopulation
-    elif "dqn" in argv.algorithm:
+    elif "dqn" in kwargs["algorithm"]:
         population_fn = DQN
-    elif "vpg" in argv.algorithm.lower():
+    elif "vpg" in kwargs["algorithm"].lower():
         population_fn = VanillaPolicyGradient
-    elif "andom" in argv.algorithm:
+    elif "andom" in kwargs["algorithm"]:
         population_fn = RandomSearch
     else:
         assert False, "population algo not found, check spelling?"
 
-    num_workers = argv.num_workers
+    num_workers = kwargs["num_workers"]
 
-    if "use_autotomy" in dict(argv._get_kwargs()).keys():
-        kwargs = dict(argv._get_kwargs())
-        kwargs["allow_autotomy"] = argv.use_autotomy
+    if "use_autotomy" in kwargs.keys():
+        kwargs["allow_autotomy"] = kwargs["use_autotomy"]
     else:
-        kwargs = dict(argv._get_kwargs())
         kwargs["allow_autotomy"] = 0
 
     population = population_fn(policy_fn, **kwargs)
@@ -147,4 +145,32 @@ if __name__ == "__main__":
     if type(args.seeds) is not list:
         args.seeds = [args.seeds]
 
-    train(args)
+    kwargs = dict(args._get_kwargs())
+
+    # use subprocess to get the current git hash, store
+    hash_command = ["git", "rev-parse", "--verify", "HEAD"]
+    git_hash = subprocess.check_output(hash_command)
+
+    # store the command-line call for this experiment
+    entry_point = []
+    entry_point.append(os.path.split(sys.argv[0])[1])
+    args_list = sys.argv[1:]
+
+    sorted_args = []
+    for aa in range(0, len(args_list)):
+
+        if "-" in args_list[aa]:
+            sorted_args.append([args_list[aa]])
+        else: 
+            sorted_args[-1].append(args_list[aa])
+
+    sorted_args.sort()
+    entry_point = "python -m symr.benchmark "
+
+    for elem in sorted_args:
+        entry_point += " " + " ".join(elem)
+
+    kwargs["entry_point"] = entry_point 
+    kwargs["git_hash"] = git_hash.decode("utf8")[:-1]
+
+    train(**kwargs)

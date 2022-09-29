@@ -215,6 +215,8 @@ def enjoy(argv):
 
                     image_path = f"./frames/frame_agent{agent_idx}_epd{episode}_step{str(step_count).zfill(4)}.png"
 
+                    img = skimage.transform.resize(img, [elem//2 for elem in img.shape[:-1]], anti_aliasing=True)
+
                     skimage.io.imsave(image_path, img)
 
                 time.sleep(0.01)
@@ -250,8 +252,8 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--file_path", type=str,\
             help="file path to model parameters", \
             default="./results/test_exp/")
-    parser.add_argument("-g", "--save_gif", type=int, default=0,\
-            help="1 - save gif to ./assets, 0 - do not")
+    parser.add_argument("-g", "--save_gif", type=float, default=0,\
+            help="1 - save gif to ./assets, 0 - do not.") 
     parser.add_argument("-m", "--mode", default=0,\
             help="mode (0,1,2, or 3) for body co-evolution")
     parser.add_argument("-ms", "--max_steps", type=int,\

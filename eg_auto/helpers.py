@@ -1,5 +1,4 @@
 import os
-
 import time
 
 import numpy as np
@@ -22,7 +21,7 @@ def check_connected(body):
         return True
 
 def make_gif(frames_path="./frames/", gif_path="./assets", \
-        tag="no_tag", speedup=3):
+        tag="no_tag", speedup=3, scale=1.0):
     
     dir_list = os.listdir(frames_path)
 

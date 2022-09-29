@@ -368,6 +368,9 @@ class ESPopulation:
             results["std_dev_fitness"] = []
             results["args"] = str(kwargs)
 
+            results["entry_point"] = kwargs["entry_point"]
+            results["git_hash"] = kwargs["git_hash"] 
+
             fitness_list = []
             t0 = time.time()
             generation = 0
@@ -446,10 +449,6 @@ class ESPopulation:
                 results["mean_fitness"].append(my_mean)
                 results["max_fitness"].append(my_max)
                 results["std_dev_fitness"].append(my_std_dev)
-
-                results["entry_point"] = kwargs["entry_point"]
-                results["git_hash"] = kwargs["git_hash"] 
-
 
 
                 np.save("results/{}/progress_{}_s{}.npy".format(kwargs["exp_name"], exp_id, seed),\

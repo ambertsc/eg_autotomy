@@ -215,7 +215,16 @@ def enjoy(argv):
 
                     image_path = f"./frames/frame_agent{agent_idx}_epd{episode}_step{str(step_count).zfill(4)}.png"
 
-                    img = skimage.transform.resize(img, [elem//2 for elem in img.shape[:-1]], anti_aliasing=True)
+                    scale_factor = 0
+
+                    if float(argv.save_gif) < 1.0:
+                        my_scale = np.clip(float(argv.save_gif), 0.1, 0.9)
+                        scale_factor = int(1/my_scale)
+
+                    if scale_factor:
+                        img = skimage.transform.resize(img, \
+                                [elem//scale_factor for elem in img.shape[:-1]],\
+                                anti_aliasing=True)
 
                     skimage.io.imsave(image_path, img)
 

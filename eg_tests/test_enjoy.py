@@ -40,7 +40,7 @@ class TestEnjoy(unittest.TestCase):
         parser.add_argument("-n", "--env_name", type=str, \
                 help="name of environemt", default="InvertedPendulumBulletEnv-v0")
         parser.add_argument("-nr", "--no_render", type=bool,\
-                help="don't render", default=False)
+                help="don't render", default=True)
         parser.add_argument("-pi", "--policy", type=str,\
                 help="name of policy architecture", default="MLPPolicy")
         parser.add_argument("-s", "--save_frames", type=bool, \
@@ -74,7 +74,7 @@ class TestEnjoy(unittest.TestCase):
         parser.add_argument("-n", "--env_name", type=str, \
                 help="name of environemt", default="InvertedPendulumBulletEnv-v0")
         parser.add_argument("-nr", "--no_render", type=bool,\
-                help="don't render", default=False)
+                help="don't render", default=True)
         parser.add_argument("-pi", "--policy", type=str,\
                 help="name of policy architecture", default="MLPPolicy")
         parser.add_argument("-s", "--save_frames", type=bool, \

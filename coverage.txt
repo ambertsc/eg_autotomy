@@ -2,13 +2,13 @@ Name                              Stmts   Miss  Cover   Missing
 ---------------------------------------------------------------
 bevodevo/__init__.py                  1      0   100%
 bevodevo/algos/__init__.py            0      0   100%
-bevodevo/algos/cmaes.py              47      6    87%   37, 77, 96-101
-bevodevo/algos/es.py                341    112    67%   53-55, 59-61, 83-85, 91-93, 96-98, 175-176, 223, 237, 255-276, 281-289, 318, 324, 335, 337, 402-423, 438-444, 466, 471-473, 490-492, 506-507, 511-562, 570-575
-bevodevo/algos/ga.py                 57      5    91%   74, 96-101
+bevodevo/algos/cmaes.py              47     32    32%   25-83, 96-101
+bevodevo/algos/es.py                349    208    40%   53-55, 59-61, 83-85, 91-93, 96-98, 127-211, 215-245, 255-276, 281-289, 318, 324, 335, 337, 368, 396-400, 405-426, 443-516, 520-573, 581-586
+bevodevo/algos/ga.py                 57     44    23%   21-55, 60-90, 96-101
 bevodevo/algos/meta_ga.py            10     10     0%   1-15
-bevodevo/algos/nes.py                73     12    84%   47, 49, 51, 73-81, 117, 132-137
-bevodevo/algos/pges.py               69     13    81%   46, 48, 50, 70-80, 110, 125-129
-bevodevo/algos/random_search.py      28      4    86%   42-47
+bevodevo/algos/nes.py                73     51    30%   41-56, 60-102, 107-126, 132-137
+bevodevo/algos/pges.py               69     48    30%   40-55, 59-95, 100-119, 125-129
+bevodevo/algos/random_search.py      28     13    54%   23-36, 42-47
 bevodevo/enjoy.py                   186     76    59%   50, 55-56, 58-59, 61-62, 64-65, 67-68, 70-71, 73, 75, 77-78, 80-81, 83-84, 89, 96, 103-107, 112, 120, 130, 135, 144, 152-159, 168-169, 175-177, 203-204, 207-229, 233, 243-245, 254-285
 bevodevo/plot.py                     34     34     0%   1-54
 bevodevo/policies/__init__.py         0      0   100%
@@ -21,6 +21,6 @@ eg_auto/__init__.py                   0      0   100%
 eg_auto/helpers.py                   27     14    48%   26-51
 eg_envs/__init__.py                   5      0   100%
 eg_envs/adaptive_walk_env.py         49      5    90%   70-73, 76-77
-eg_envs/back_and_forth_env.py       127      7    94%   117-120, 170, 173, 176, 203
+eg_envs/back_and_forth_env.py       133     10    92%   118-121, 173-174, 177-178, 181-182, 210
 ---------------------------------------------------------------
-TOTAL                              1714    492    71%
+TOTAL                              1728    739    57%

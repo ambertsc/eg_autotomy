@@ -3,6 +3,8 @@ import os
 import subprocess
 import copy
 
+import random
+
 import torch
 import numpy as np
 import time
@@ -58,6 +60,9 @@ class ESPopulation:
 
             self.env = self.env_fn(id=self.env_args, body=body, **self.kwargs) 
 
+        rank = comm.Get_rank()
+        self.env.seed(rank)
+
         self.population[agent_idx].reset()
 
         for epd in range(epds):
@@ -85,7 +90,7 @@ class ESPopulation:
                     obs, reward, done, info = self.env.step(action)
                 except:
                     print("Oh nose")
-                    import pdb; pdb.set_trace()
+                    assert False
 
                 if len(obs.shape) == 3:
                     obs = obs / 255.
@@ -107,7 +112,7 @@ class ESPopulation:
                 self.env.close()
                 self.env.render(mode="close")
 
-        return fitness, total_steps
+        return fitness, total_steps, info
 
     def get_elite(self, fitness_list, mode=0):
         """
@@ -340,8 +345,11 @@ class ESPopulation:
             self.abort = False
             # seed everything
             my_seed = seed
+
+            random.seed(my_seed)
             np.random.seed(my_seed)
             torch.random.manual_seed(my_seed)
+            _ = torch.cuda.manual_seed(my_seed) if torch.cuda.is_available() else None
     
             self.population = [self.policy_fn(**agent_args)\
                     for ii in range(self.population_size)]
@@ -367,6 +375,9 @@ class ESPopulation:
             results["max_fitness"] = []
             results["std_dev_fitness"] = []
             results["args"] = str(kwargs)
+
+            results["autotomy_proportion"] = []
+            results["autotomy_champion"] = []
 
             results["entry_point"] = kwargs["entry_point"]
             results["git_hash"] = kwargs["git_hash"] 
@@ -417,23 +428,27 @@ class ESPopulation:
 
                 # for single-core operation, mantle process gathers rollouts
                 total_steps = 0
+                fitness_list = []
+                autotomy = []
+
                 if num_worker == 0:
-                    fitness_list = []
                     for agent_idx in range(self.population_size):
-                        fitness, steps = self.get_fitness(agent_idx)
+                        fitness, steps, info = self.get_fitness(agent_idx)
 
                         fitness_list.append(fitness)
                         total_steps += steps
+                        autotomy.append(info["autotomy_used"])
 
                 # receive current generation's fitnesses from arm processes
                 if num_worker > 0:
-                    fitness_list = []
                     pop_left = self.population_size
                     for cc in range(1, num_worker):
                         fit = comm.recv(source=cc)
                         fitness_list.extend(fit[0])
                         
                         total_steps += fit[1]
+                        autotomy.extend(\
+                                [elem["autotomy_used"] for elem in fit[2]])
 
                 self.total_env_interacts += total_steps
 
@@ -450,6 +465,8 @@ class ESPopulation:
                 results["max_fitness"].append(my_max)
                 results["std_dev_fitness"].append(my_std_dev)
 
+                results["autotomy_proportion"].append(np.mean(autotomy))
+                results["autotomy_champion"].append(autotomy[np.argmax(fitness_list)])
 
                 np.save("results/{}/progress_{}_s{}.npy".format(kwargs["exp_name"], exp_id, seed),\
                         results, allow_pickle=True)
@@ -545,13 +562,15 @@ class ESPopulation:
 
             fitness_sublist = []
             total_substeps = 0
+            info_sublist = []
             for agent_idx in range(self.population_size):
-                fitness, steps = self.get_fitness(agent_idx)
+                fitness, steps, info = self.get_fitness(agent_idx)
                 
                 fitness_sublist.append(fitness)
+                info_sublist.append(info)
                 total_substeps += steps
 
-            comm.send([fitness_sublist, total_substeps], dest=0)
+            comm.send([fitness_sublist, total_substeps, info_sublist], dest=0)
 
 
 

@@ -27,7 +27,7 @@ class TestEnjoy(unittest.TestCase):
                 help="how many agents to evaluate", \
                 default=1)
         parser.add_argument("-e", "--episodes", type=int,\
-                help="number of episodes", default=5)
+                help="number of episodes", default=1)
         parser.add_argument("-f", "--file_path", type=str,\
                 help="file path to model parameters", \
                 default="./results/test_exp/")
@@ -61,7 +61,7 @@ class TestEnjoy(unittest.TestCase):
                 help="how many agents to evaluate", \
                 default=1)
         parser.add_argument("-e", "--episodes", type=int,\
-                help="number of episodes", default=5)
+                help="number of episodes", default=1)
         parser.add_argument("-f", "--file_path", type=str,\
                 help="file path to model parameters", \
                 default="./results/test_exp/")

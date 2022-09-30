@@ -3,6 +3,8 @@ import os
 import subprocess
 import copy
 
+import random
+
 import torch
 import numpy as np
 import time
@@ -57,6 +59,9 @@ class ESPopulation:
             body = self.population[agent_idx].get_body()
 
             self.env = self.env_fn(id=self.env_args, body=body, **self.kwargs) 
+
+        rank = comm.Get_rank()
+        self.env.seed(rank)
 
         self.population[agent_idx].reset()
 
@@ -340,8 +345,11 @@ class ESPopulation:
             self.abort = False
             # seed everything
             my_seed = seed
+
+            random.seed(my_seed)
             np.random.seed(my_seed)
             torch.random.manual_seed(my_seed)
+            _ = torch.cuda.manual_seed(my_seed) if torch.cuda.is_available() else None
     
             self.population = [self.policy_fn(**agent_args)\
                     for ii in range(self.population_size)]

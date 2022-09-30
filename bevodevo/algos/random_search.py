@@ -12,8 +12,8 @@ from bevodevo.algos.es import ESPopulation
 
 class RandomSearch(ESPopulation):
 
-    def __init__(self, policy_fn, num_workers=0):
-        super(RandomSearch, self).__init__(policy_fn, num_workers=num_workers)
+    def __init__(self, policy_fn, num_workers=0, **kwargs):
+        super(RandomSearch, self).__init__(policy_fn, num_workers=num_workers, **kwargs)
 
         self.std_dev = 1e0
         self.elitism = True

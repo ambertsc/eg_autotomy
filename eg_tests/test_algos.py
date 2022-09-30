@@ -35,9 +35,9 @@ class TestESPopulation(unittest.TestCase):
 
         parser = argparse.ArgumentParser("Experiment parameters")
         parser.add_argument("-n", "--env_name", type=str, \
-                help="name of environemt", default="InvertedPendulumBulletEnv-v0")
+                help="name of environemt", default="BackAndForthEnv-v0")
         parser.add_argument("-p", "--population_size", type=int,\
-                help="number of individuals in population", default=6)
+                help="number of individuals in population", default=2)
         parser.add_argument("-w", "--num_workers", type=int,\
                 help="number of cpu thread workers", default=0)
         parser.add_argument("-a", "--algorithm", type=str,\
@@ -88,6 +88,8 @@ class TestESPopulation(unittest.TestCase):
 
         kwargs["entry_point"] = entry_point 
         kwargs["git_hash"] = git_hash.decode("utf8")[:-1]
+        kwargs["population_size"] = 1
+        kwargs["generations"] = 2
 
         self.population.mantle(**kwargs)
 

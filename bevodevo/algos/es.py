@@ -90,7 +90,7 @@ class ESPopulation:
                     obs, reward, done, info = self.env.step(action)
                 except:
                     print("Oh nose")
-                    import pdb; pdb.set_trace()
+                    assert False
 
                 if len(obs.shape) == 3:
                     obs = obs / 255.

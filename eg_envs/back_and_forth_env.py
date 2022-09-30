@@ -107,7 +107,8 @@ class BackAndForthEnvClass(EvoGymBase):
         info = {"center_of_mass_1": center_of_mass_1,\
                 "center_of_mass_2": center_of_mass_2,\
                 "end_0": 0,\
-                "end_1": 0}
+                "end_1": 0,
+                "autotomy_used": self.autotomy_used}
 
         reward = center_of_mass_2[0] - center_of_mass_1[0]
 
@@ -159,21 +160,27 @@ class BackAndForthEnvClass(EvoGymBase):
                 most = temp
                 keep_index = check
 
+        if ((self.robot_body > 0) + (1 - (mask[0] == keep_index))).max() >= 2:
+            print("autotomed")
+            self.autotomy_used = True
+
         if (0 < self.robot_body * (mask[0] == keep_index)).sum() >= 3:
-            print( (0 < self.robot_body * (mask[0] == keep_index)).sum())
 
             self.robot_body *= (mask[0] == keep_index) 
-
 
         if self.robot_body.sum() == 0:
             # no empty bodies
             self.robot_body = old_body
+            self.autotomy_used = False
         elif self.robot_body.max() <= 2:
             # no passive robots
             self.robot_body = old_body
+            self.autotomy_used = False
         if not check_connected(self.robot_body):
             # no disconnected body plans
             self.robot_body = old_body
+            self.autotomy_used = False
+
 
         self.robot_body = 1.0 * np.clip(self.robot_body, 0, 4)
         
@@ -200,7 +207,7 @@ class BackAndForthEnvClass(EvoGymBase):
         super(BackAndForthEnvClass, self).__init__(self.world)
             
         if "robot" not in self.world.objects.keys():
-            import pdb; pdb.set_trace()
+            assert False, "no robot found"
 
         self.setup_action_space()
         self.default_viewer.track_objects("robot") 
@@ -219,6 +226,8 @@ class BackAndForthEnvClass(EvoGymBase):
         self.goal_counter = np.array([0])
 
         obs = self.get_obs()
+
+        self.autotomy_used = False
         
         return obs
 

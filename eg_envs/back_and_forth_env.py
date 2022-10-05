@@ -161,7 +161,6 @@ class BackAndForthEnvClass(EvoGymBase):
                 keep_index = check
 
         if ((self.robot_body > 0) + (1 - (mask[0] == keep_index))).max() >= 2:
-            print("autotomed")
             self.autotomy_used = True
 
         if (0 < self.robot_body * (mask[0] == keep_index)).sum() >= 3:

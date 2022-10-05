@@ -80,6 +80,34 @@ class TestBackAndForthEnv(unittest.TestCase):
 
         self.assertFalse("robot" in env.world.objects.keys())
 
+    def test_difficulty(self):
+
+        body = np.ones((8,8)) * 3
+        connections = None
+
+        env = gym.make("BackAndForthEnv-v0", body=body, goal=[2,48], \
+                allow_autotomy=False, use_difficulty=1)
+
+        old_body = 1. * env.robot_body
+
+        _ = env.reset()
+
+        total_reward = 0.
+        autotomy = np.zeros((env.robot_body_elements,))
+
+        done = False
+        for step in range(100):
+            while not done:
+                action = env.action_space.sample()
+
+                action[-env.robot_body_elements:] = autotomy
+
+                obs, reward, done, info = env.step(action)
+                total_reward += reward
+
+        self.assertEqual(env.difficulty_level, env.max_difficulty)
+
+
     def test_autotomy(self):
 
         body = np.ones((8,8)) * 3
@@ -164,3 +192,6 @@ class TestBackAndForthEnv(unittest.TestCase):
         self.assertTrue(env.mode)
 
         self.assertTrue(True)
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

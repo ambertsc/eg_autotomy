@@ -148,10 +148,10 @@ class BackAndForthEnvClass(EvoGymBase):
             if self.use_difficulty and self.difficulty_level < self.max_difficulty:
                 if self.goal_counter >= 1:
                     self.reverse_direction(action)
+                    self.difficulty_level += 1
                 else: 
                     self.goal_counter += 1
 
-                self.difficulty_level += 1
             else:
                 done = True
 

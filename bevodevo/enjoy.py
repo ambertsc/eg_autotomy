@@ -256,6 +256,8 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--num_agents", type=int,\
             help="how many agents to evaluate", \
             default=1)
+    parser.add_argument("-d", "--use_difficulty", type=int, default=0,\
+            help="use increasing difficulty")
     parser.add_argument("-e", "--episodes", type=int,\
             help="number of episodes", default=5)
     parser.add_argument("-f", "--file_path", type=str,\

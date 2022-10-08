@@ -210,7 +210,7 @@ class BackAndForthEnvClass(EvoGymBase):
 
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
 
-        if self.use_difficulty and self.difficulty_level == 1: 
+        if self.use_difficulty and self.difficulty_level == 0: 
             filepath = os.path.join(this_filepath,  "world_data", \
                     "flat_walk_diff1.json")
         else:

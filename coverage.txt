@@ -21,6 +21,6 @@ eg_auto/__init__.py                   0      0   100%
 eg_auto/helpers.py                   27     14    48%   26-51
 eg_envs/__init__.py                   5      0   100%
 eg_envs/adaptive_walk_env.py         49      5    90%   70-73, 76-77
-eg_envs/back_and_forth_env.py       149     12    92%   127-130, 191-192, 195-196, 199-200, 220-221, 235
+eg_envs/back_and_forth_env.py       143     11    92%   132-135, 188-189, 192-193, 196-197, 214, 231
 ---------------------------------------------------------------
-TOTAL                              1746    542    69%
+TOTAL                              1740    541    69%

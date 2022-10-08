@@ -114,7 +114,7 @@ if __name__ == "__main__":
             help="body dim", \
             default=8)
     parser.add_argument("-d", "--use_difficulty", type=int, default=0,\
-            help="use increasing difficulty")
+            help="use increased difficulty")
     parser.add_argument("-g", "--generations", type=int,\
             help="number of generations", default=50)
     parser.add_argument("-m", "--mode", default=0,\

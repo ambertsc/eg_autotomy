@@ -175,7 +175,7 @@ def enjoy(argv):
             body = agent.get_body()
 
             env = gym.make(id=env_name, body=body, \
-                    allow_autotomy=argv.use_autotomy) 
+                    allow_autotomy=argv.use_autotomy, **kwargs) 
         else:
             env = gym.make(id=env_name)
 
@@ -257,7 +257,7 @@ if __name__ == "__main__":
             help="how many agents to evaluate", \
             default=1)
     parser.add_argument("-d", "--use_difficulty", type=int, default=0,\
-            help="use increasing difficulty")
+            help="use increased difficulty")
     parser.add_argument("-e", "--episodes", type=int,\
             help="number of episodes", default=5)
     parser.add_argument("-f", "--file_path", type=str,\

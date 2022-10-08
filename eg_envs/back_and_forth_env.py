@@ -95,8 +95,8 @@ class BackAndForthEnvClass(EvoGymBase):
 
         action_space_size = self.num_actuators + self.robot_body_elements
 
-        self.action_space = spaces.Box(low=0.6, high=1.6, shape=(action_space_size, ), dtype=np.float)
-        self.observation_space = spaces.Box(low=-100.0, high=100.0, shape = (obs_size,), dtype=np.float)
+        self.action_space = spaces.Box(low=0.6, high=1.6, shape=(action_space_size, ), dtype=float)
+        self.observation_space = spaces.Box(low=-100.0, high=100.0, shape = (obs_size,), dtype=float)
 
     def remove_robot(self, name="robot"):
         

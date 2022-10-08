@@ -96,7 +96,7 @@ class TestBackAndForthEnv(unittest.TestCase):
         autotomy = np.zeros((env.robot_body_elements,))
 
         done = False
-        for step in range(100):
+        for step in range(1):
             while not done:
                 action = env.action_space.sample()
 
@@ -105,8 +105,7 @@ class TestBackAndForthEnv(unittest.TestCase):
                 obs, reward, done, info = env.step(action)
                 total_reward += reward
 
-        self.assertEqual(env.difficulty_level, env.max_difficulty)
-
+        self.assertTrue(env.use_difficulty)
 
     def test_autotomy(self):
 

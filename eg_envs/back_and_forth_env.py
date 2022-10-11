@@ -82,9 +82,9 @@ class BackAndForthEnvClass(EvoGymBase):
         self.robot_body_elements = self.robot_body.shape[0] * self.robot_body.shape[1]
 
         if self.mode:
-            self.world.add_from_array("robot", body, 32, 1, connections=connections) 
+            self.world.add_from_array("robot", body, 28, 1, connections=connections) 
         else:
-            self.world.add_from_array("robot", body, 32, 1, connections=connections) 
+            self.world.add_from_array("robot", body, 28, 1, connections=connections) 
 
     def setup_action_space(self):
 

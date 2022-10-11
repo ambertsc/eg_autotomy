@@ -29,7 +29,9 @@ class MLPBodyPolicy(MLPPolicy):
 
         if "mode" in kwargs.keys():
             self.mode = int(kwargs["mode"])
-            self.body_dim = 5
+            if self.mode:
+                # indicates a set starting body plan
+                self.body_dim = 5
         else:
             # coevo with body
             self.mode = 0

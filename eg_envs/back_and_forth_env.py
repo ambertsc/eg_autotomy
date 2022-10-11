@@ -18,8 +18,22 @@ class BackAndForthEnvClass(EvoGymBase):
 
         self.max_episode_steps = 2048
 
+        if "use_difficulty" in kwargs.keys():
+            self.use_difficulty = kwargs["use_difficulty"]
+            self.difficulty_level = 0
+            self.max_difficulty = 2
+        else:
+            self.use_difficulty = 0
+            self.difficulty_level = 0
+            self.max_difficulty = 2
+
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
-        filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
+
+        if self.use_difficulty and self.difficulty_level == 0: 
+            filepath = os.path.join(this_filepath,  "world_data", \
+                    "flat_walk_diff1.json")
+        else:
+            filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
         self.world = EvoWorld.from_json(filepath)
             
         if body is None:
@@ -42,15 +56,6 @@ class BackAndForthEnvClass(EvoGymBase):
             self.allow_autotomy = kwargs["allow_autotomy"]
         else:
             self.allow_autotomy = True 
-
-        if "use_difficulty" in kwargs.keys():
-            self.use_difficulty = kwargs["use_difficulty"]
-            self.difficulty_level = 0
-            self.max_difficulty = 2
-        else:
-            self.use_difficulty = 0
-            self.difficulty_level = 0
-            self.max_difficulty = 2
 
         self.goal_counter = np.array([0])
         self.add_robot(body, connections)
@@ -77,9 +82,9 @@ class BackAndForthEnvClass(EvoGymBase):
         self.robot_body_elements = self.robot_body.shape[0] * self.robot_body.shape[1]
 
         if self.mode:
-            self.world.add_from_array("robot", body, 32, 1, connections=connections) 
+            self.world.add_from_array("robot", body, 28, 1, connections=connections) 
         else:
-            self.world.add_from_array("robot", body, 32, 1, connections=connections) 
+            self.world.add_from_array("robot", body, 28, 1, connections=connections) 
 
     def setup_action_space(self):
 
@@ -90,8 +95,8 @@ class BackAndForthEnvClass(EvoGymBase):
 
         action_space_size = self.num_actuators + self.robot_body_elements
 
-        self.action_space = spaces.Box(low=0.6, high=1.6, shape=(action_space_size, ), dtype=np.float)
-        self.observation_space = spaces.Box(low=-100.0, high=100.0, shape = (obs_size,), dtype=np.float)
+        self.action_space = spaces.Box(low=0.6, high=1.6, shape=(action_space_size, ), dtype=float)
+        self.observation_space = spaces.Box(low=-100.0, high=100.0, shape = (obs_size,), dtype=float)
 
     def remove_robot(self, name="robot"):
         
@@ -145,15 +150,7 @@ class BackAndForthEnvClass(EvoGymBase):
             time_bonus = self.max_episode_steps - self.get_time()
             reward += 10 * time_bonus/self.max_episode_steps
 
-            if self.use_difficulty and self.difficulty_level < self.max_difficulty:
-                if self.goal_counter >= 1:
-                    self.reverse_direction(action)
-                    self.difficulty_level += 1
-                else: 
-                    self.goal_counter += 1
-
-            else:
-                done = True
+            done = True
 
             info["end_1"] = 1
 
@@ -213,12 +210,11 @@ class BackAndForthEnvClass(EvoGymBase):
 
         this_filepath = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
 
-        if self.difficulty_level == 0:
+        if self.use_difficulty and self.difficulty_level == 0: 
+            filepath = os.path.join(this_filepath,  "world_data", \
+                    "flat_walk_diff1.json")
+        else:
             filepath = os.path.join(this_filepath,  "world_data", "flat_walk.json")
-        elif self.difficulty_level == 1:
-            filepath = os.path.join(this_filepath,  "world_data", "hole_walk.json")
-        elif self.difficulty_level == 2:
-            filepath = os.path.join(this_filepath,  "world_data", "step_walk.json")
 
         self.world = EvoWorld.from_json(filepath)
 

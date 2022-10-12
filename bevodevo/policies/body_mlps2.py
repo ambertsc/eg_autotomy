@@ -22,9 +22,35 @@ from eg_auto.helpers import check_connected
 class MLPBodyPolicy2(MLPBodyPolicy):
     
     def __init__(self, **kwargs):
+
         self.autotomy_multiplier = 5
+        self.body_multiplier = 16
+
         super().__init__(**kwargs)
 
+
+    def init_body(self):
+        super().init_body()
+
+        self.body_prob = np.random.rand(*self.body.shape) 
+        self.body_prob *= (self.body > 0)
+
+    def set_body_prob(self, body_prob):
+        
+        self.body_prob = body_prob
+
+    def get_body(self):
+
+        my_shape = self.body.shape
+
+        my_body_prob = torch.tensor(self.body_prob).reshape(-1,1).float()
+        my_body_prob = torch.softmax(my_body_prob, dim=0).reshape(*my_shape)
+
+        my_body_prob *= self.body_multiplier
+
+        my_body_prob = 1.0 * (my_body_prob > torch.rand_like(my_body_prob)).numpy()
+
+        return self.body * my_body_prob
 
     def get_autotomy(self):
         
@@ -67,6 +93,15 @@ class MLPBodyPolicy2(MLPBodyPolicy):
             updated_body = self.given_body(mode=self.mode)
         self.set_body(updated_body)
 
+        param_start = param_stop
+        param_stop = param_start \
+                + reduce(lambda x,y: x*y, self.autotomy.shape)
+        if self.mode == 0:
+            updated_body_prob = my_params[param_start:param_stop]
+        else:
+            updated_body_prob = np.ones(self.body.shape)
+        self.set_body_prob(updated_body_prob)
+
         # set the body autotomy plan
         param_start = param_stop
         param_stop = param_start \
@@ -82,8 +117,8 @@ class MLPBodyPolicy2(MLPBodyPolicy):
             self.body_dim = 5
             params = np.append(params, param[1].detach().numpy().ravel())
 
-
-        params = np.append(params, self.get_body().ravel())
+        params = np.append(params, self.body.ravel())
+        params = np.append(params, self.body_prob.ravel())
         params = np.append(params, self.autotomy.ravel())
 
         return params

@@ -141,10 +141,10 @@ class TestMLPBodyPolicy2(TestMLPBodyPolicy):
 
         new_params = np.random.randint(0, 4, my_params.shape)
 
-        my_body = self.policy.get_body().ravel()
+        my_body = self.policy.body.ravel()
         my_autotomy = np.clip(new_params[-self.policy.body_elements:],0,1)
 
-        new_params[-2*self.policy.body_elements:-self.policy.body_elements] = my_body
+        new_params[-3*self.policy.body_elements:-2*self.policy.body_elements] = my_body
         new_params[-self.policy.body_elements:] = my_autotomy
 
         self.policy.set_params(new_params)
@@ -176,6 +176,24 @@ class TestMLPBodyPolicy2(TestMLPBodyPolicy):
 
         self.assertEqual(2, np.unique(action_autotomy).shape[0])
         self.assertEqual(2, np.unique(my_autotomy).shape[0])
+
+    def test_body(self):
+
+        my_params = self.policy.get_params()
+        self.policy.reset()
+
+        temp_env = gym.make("BackAndForthEnv-v0", body=self.policy.body)
+
+        self.policy.body_multiplier = 100. * self.policy.body_dim**2
+        
+        my_body = self.policy.get_body()
+        my_params_body = my_params[\
+                -3*self.policy.body_elements:-2*self.policy.body_elements]
+
+        self.assertLessEqual(5, np.unique(my_body).shape[0])
+        self.assertLessEqual(5, np.unique(my_params_body).shape[0])
+
+        self.assertEqual(0, (my_body.ravel() - my_params_body.squeeze()).sum())
 
 
 class TestGivenBody(unittest.TestCase):

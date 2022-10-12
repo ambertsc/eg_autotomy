@@ -23,17 +23,51 @@ class MLPBodyPolicy2(MLPBodyPolicy):
     
     def __init__(self, **kwargs):
 
-        self.autotomy_multiplier = 5
-        self.body_multiplier = 16
+        if "autotomy_multiplier" in kwargs.keys():
+            self.autotomy_multiplier = kwargs["autotomy_multiplier"]
+        else:
+            self.autotomy_multiplier = 3
+        if "body_multiplier" in kwargs.keys():
+            self.body_multiplier = kwargs["body_multiplier"]
+        else:
+            self.body_multiplier = 48
 
         super().__init__(**kwargs)
 
+    def max_body(self): 
+
+        my_shape = self.body.shape
+        my_body_prob = np.random.rand(*my_shape)
+        my_body_prob = torch.tensor(my_body_prob).reshape(-1,1).float()
+        my_body_prob = torch.softmax(my_body_prob, dim=0).reshape(*my_shape)
+
+        my_body_prob *= self.body_multiplier
+        my_body_prob = 1.0 * (my_body_prob > torch.rand_like(my_body_prob)).numpy()
+
+        self.body_prob = my_body_prob 
+        self.body = self.body_prob  * np.random.randint(1,4, self.body.shape)
 
     def init_body(self):
-        super().init_body()
 
-        self.body_prob = np.random.rand(*self.body.shape) 
-        self.body_prob *= (self.body > 0)
+        if self.mode == 0:
+            self.body, self.connections = sample_robot((self.body_dim, self.body_dim)) 
+            self.max_body()
+
+            while self.body.max() < 3 or not(check_connected(self.body)):
+                # avoid a bot with no actuators
+                self.max_body()
+        else:
+            self.body, self.connections = self.given_body(mode=self.mode), None
+
+        temp_env = gym.make("BackAndForthEnv-v0", body=self.body)
+        self.active_action_dim = temp_env.action_space.sample().ravel().shape[0]
+
+        my_autotomy = np.random.randint(0,2, size=self.body.shape)
+    
+        self.set_autotomy(my_autotomy)
+
+        self.body_elements = self.autotomy.shape[0] * self.autotomy.shape[1]
+
 
     def set_body_prob(self, body_prob):
         
@@ -41,16 +75,7 @@ class MLPBodyPolicy2(MLPBodyPolicy):
 
     def get_body(self):
 
-        my_shape = self.body.shape
-
-        my_body_prob = torch.tensor(self.body_prob).reshape(-1,1).float()
-        my_body_prob = torch.softmax(my_body_prob, dim=0).reshape(*my_shape)
-
-        my_body_prob *= self.body_multiplier
-
-        my_body_prob = 1.0 * (my_body_prob > torch.rand_like(my_body_prob)).numpy()
-
-        return self.body * my_body_prob
+        return self.body
 
     def get_autotomy(self):
         

@@ -20,6 +20,7 @@ from bevodevo.policies.mlps import MLPPolicy,\
         HebbianMLP, ABCHebbianMLP
 from bevodevo.policies.body_mlps import MLPBodyPolicy,\
         HebbianMLPBody, ABCHebbianMLPBody
+from bevodevo.policies.body_mlps2 import MLPBodyPolicy2
 
 from bevodevo.algos.es import ESPopulation
 from bevodevo.algos.cmaes import CMAESPopulation
@@ -65,6 +66,9 @@ def train(**kwargs):
     elif "hebbianmlp" in kwargs["policy"].lower():
         policy_fn = HebbianMLP
         kwargs["policy"] = "HebbianMLP"
+    elif "mlpbodypolicy2" in kwargs["policy"].lower():
+        policy_fn = MLPBodyPolicy2
+        kwargs["policy"] = "MLPBodyPolicy"
     elif "mlpbodypolicy" in kwargs["policy"].lower():
         policy_fn = MLPBodyPolicy
         kwargs["policy"] = "MLPBodyPolicy"

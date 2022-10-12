@@ -7,6 +7,7 @@ from eg_tests.test_envs import TestBackAndForthEnv, TestAdaptiveWalkEnv
 from eg_tests.test_mlps import TestMLPPolicy, \
         TestHebbianMLP, \
         TestMLPBodyPolicy, \
+        TestMLPBodyPolicy2, \
         TestHebbianMLPBodyPolicy, \
         TestABCHebbianMLPBodyPolicy, \
         TestABCHebbianMLP

@@ -23,7 +23,7 @@ class GeneticPopulation(ESPopulation):
         recombination_chance = 0.167
 
         pruning_rate = 0.05
-        weight_var = 0.20
+        weight_var = 0.50
         weight_rate = 0.05
         recombination_rate = 0.125
 

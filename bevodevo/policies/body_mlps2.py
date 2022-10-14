@@ -85,7 +85,7 @@ class MLPBodyPolicy2(MLPBodyPolicy):
         
         my_autotomy = (self.autotomy).reshape(self.body.shape)
 
-        my_autotomy[self.body ==0] = 0.
+        my_autotomy[self.body == 0] = 0.
         
         my_autotomy = torch.tensor(my_autotomy).reshape(-1,1).float()
         my_autotomy = torch.softmax(my_autotomy, dim=0).reshape(*my_shape)
@@ -93,6 +93,9 @@ class MLPBodyPolicy2(MLPBodyPolicy):
         my_autotomy *= self.autotomy_multiplier
 
         my_autotomy = 1.0 * (my_autotomy > torch.rand_like(my_autotomy)).numpy()
+
+        # autotomy is active (pruning occurs) where my_autotomy > 0.5
+        my_autotomy = 1.0 - my_autotomy
 
         return my_autotomy
 

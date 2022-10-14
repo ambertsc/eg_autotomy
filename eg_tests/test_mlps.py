@@ -190,8 +190,8 @@ class TestMLPBodyPolicy2(TestMLPBodyPolicy):
         my_params_body = my_params[\
                 -3*self.policy.body_elements:-2*self.policy.body_elements]
 
-        self.assertLessEqual(5, np.unique(my_body).shape[0])
-        self.assertLessEqual(5, np.unique(my_params_body).shape[0])
+        
+        self.assertEqual(2, len((my_body).shape))
 
         self.assertEqual(0, (my_body.ravel() - my_params_body.squeeze()).sum())
 

@@ -82,7 +82,9 @@ class MLPBodyPolicy2(MLPBodyPolicy):
         my_shape = self.autotomy.shape
         
         # only consider autotomy where there is a body
-        my_autotomy = self.autotomy * 1.0
+        
+        my_autotomy = (self.autotomy).reshape(self.body.shape)
+
         my_autotomy[self.body ==0] = 0.
         
         my_autotomy = torch.tensor(my_autotomy).reshape(-1,1).float()

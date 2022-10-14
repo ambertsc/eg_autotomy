@@ -78,8 +78,14 @@ class BackAndForthEnvClass(EvoGymBase):
 
     def add_robot(self, body, connections):
 
+        row_index = -1
+        
+        while body[row_index,:].sum() == 0:
+            body = body[:row_index,:]
+
         self.robot_body = 1.0 * body
         self.robot_body_elements = self.robot_body.shape[0] * self.robot_body.shape[1]
+
 
         if self.mode:
             self.world.add_from_array("robot", body, 28, 1, connections=connections) 

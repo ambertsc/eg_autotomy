@@ -13,7 +13,7 @@ bevodevo/enjoy.py                   187     77    59%   50, 55-56, 58-59, 61-62,
 bevodevo/plot.py                     34     34     0%   1-54
 bevodevo/policies/__init__.py         0      0   100%
 bevodevo/policies/base.py            19      6    68%   12, 15, 18, 21, 24, 30
-bevodevo/policies/body_mlps2.py      89      5    94%   27, 31, 60, 124, 133
+bevodevo/policies/body_mlps2.py      90      5    94%   27, 31, 60, 127, 136
 bevodevo/policies/body_mlps.py      190     24    87%   26, 31-34, 55, 75-99, 116-120, 123, 126, 128, 130, 151-153, 198
 bevodevo/policies/mlps.py           249     36    86%   31-41, 46, 56, 66-68, 73, 100, 144, 165-169, 177, 206, 333-343, 478-491
 bevodevo/policies/rnns.py            84     10    88%   43, 73, 89-96, 115, 158-159
@@ -24,4 +24,4 @@ eg_envs/__init__.py                   5      0   100%
 eg_envs/adaptive_walk_env.py         49      5    90%   70-73, 76-77
 eg_envs/back_and_forth_env.py       146     11    92%   84, 138-141, 194-195, 198-199, 202-203, 237
 ---------------------------------------------------------------
-TOTAL                              1837    551    70%
+TOTAL                              1838    551    70%

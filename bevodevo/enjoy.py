@@ -23,6 +23,7 @@ from bevodevo.policies.mlps import MLPPolicy, \
         HebbianMLP, ABCHebbianMLP 
 from bevodevo.policies.body_mlps import MLPBodyPolicy,\
         HebbianMLPBody, ABCHebbianMLPBody
+from bevodevo.policies.body_mlps2 import MLPBodyPolicy2
 
 
 from bevodevo.algos.es import ESPopulation
@@ -79,6 +80,9 @@ def enjoy(argv):
     elif "hebbianmlp" in argv.policy.lower():
         policy_fn = HebbianMLP
         argv.policy = "HebbianMLP"
+    elif "mlpbodypolicy2" in argv.policy.lower():
+        policy_fn = MLPBodyPolicy2
+        argv.policy = "MLPBodyPolicy2"
     elif "mlpbodypolicy" in argv.policy.lower():
         policy_fn = MLPBodyPolicy
         argv.policy = "MLPBodyPolicy"
@@ -161,6 +165,7 @@ def enjoy(argv):
 
 
         agent_args["discrete"] = discrete
+        agent_args["body_dim"] = argv.body_dim
         agent = policy_fn(**agent_args)
 
 
@@ -170,17 +175,17 @@ def enjoy(argv):
         else:
             agent.set_params(my_params)
 
-        if "BackAndForthEnv" in env_name and "body" in dir(agent):
-
-            body = agent.get_body()
-
-            env = gym.make(id=env_name, body=body, \
-                    allow_autotomy=argv.use_autotomy, **kwargs) 
-        else:
-            env = gym.make(id=env_name)
 
         epd_rewards = []
         for episode in range(argv.episodes):
+            if "BackAndForthEnv" in env_name and "body" in dir(agent):
+
+                body = agent.get_body()
+
+                env = gym.make(id=env_name, body=body, \
+                        allow_autotomy=argv.use_autotomy, **kwargs) 
+            else:
+                env = gym.make(id=env_name)
             obs = env.reset()
             sum_reward = 0.0
             done = False
@@ -217,7 +222,7 @@ def enjoy(argv):
 
                     scale_factor = 0
 
-                    if float(argv.save_gif) < 1.0:
+                    if float(argv.save_gif) < 1.0 and float(argv.save_gif) != 0.0:
                         my_scale = np.clip(float(argv.save_gif), 0.1, 0.9)
                         scale_factor = int(1/my_scale)
 
@@ -256,6 +261,9 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--num_agents", type=int,\
             help="how many agents to evaluate", \
             default=1)
+    parser.add_argument("-b", "--body_dim", type=int,\
+            help="body dim", \
+            default=8)
     parser.add_argument("-d", "--use_difficulty", type=int, default=0,\
             help="use increased difficulty")
     parser.add_argument("-e", "--episodes", type=int,\

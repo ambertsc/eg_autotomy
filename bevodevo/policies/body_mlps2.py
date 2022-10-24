@@ -148,7 +148,6 @@ class MLPBodyPolicy2(MLPBodyPolicy):
         params = np.array([])
 
         for param in self.layers.named_parameters():
-            self.body_dim = 5
             params = np.append(params, param[1].detach().numpy().ravel())
 
         params = np.append(params, self.body.ravel())

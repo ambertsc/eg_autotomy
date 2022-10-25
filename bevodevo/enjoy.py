@@ -236,6 +236,9 @@ def enjoy(argv):
                 time.sleep(0.01)
                 if step_count >= argv.max_steps:
                     done = True
+            print(f"auototomy used in env? {env.unwrapped.autotomy_used}")
+            print(f"auototomy allowed in env? {env.unwrapped.allow_autotomy}")
+            print(agent.body_dim, agent.__class__)
 
 
             epd_rewards.append(sum_reward)

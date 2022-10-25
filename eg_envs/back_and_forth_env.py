@@ -239,10 +239,12 @@ class BackAndForthEnvClass(EvoGymBase):
         self.setup_action_space()
         self.default_viewer.track_objects("robot") 
 
+        autotomy_temp = self.autotomy_used
         self.reset()
 
         self.mode = np.array([1])
         self.goal_counter = np.array([0])
+        self.autotomy_used = autotomy_temp
 
 
     def reset(self):

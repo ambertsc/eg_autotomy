@@ -23,7 +23,7 @@ from eg_auto.helpers import check_connected
 
 class ESPopulation:
 
-    def __init__(self, policy_fn, discrete=False, num_workers=0, threshold=float("Inf"), **kwargs):
+    def __init__(self, policy_fn, discrete=False, num_workers=0, performance_threshold=float("Inf"), **kwargs):
         
         self.policy_fn = policy_fn
 
@@ -36,7 +36,7 @@ class ESPopulation:
         self.leaderboard = None
 
         self.abort = False
-        self.threshold = threshold
+        self.threshold = performance_threshold
 
         self.tourney_size = 5
         self.kwargs = kwargs

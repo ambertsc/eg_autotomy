@@ -301,7 +301,7 @@ class ESPopulation:
 
         num_worker = kwargs["num_workers"]
         disp_every = max(max_generations // 100, 1)
-        save_every = max(max_generations // 20, 1)
+        save_every = 1 #max(max_generations // 20, 1)
 
         self.env_fn = gym.make 
         self.env_args = env_name
@@ -391,13 +391,6 @@ class ESPopulation:
 
                 t1 = time.time()
 
-                # apply updates according to _last_ generation's fitness list
-                if len(fitness_list) > 0:
-                    print("time", time.time()-t0)
-                    print("gen {} mean fitness {:.2e}+/-{:.2e} max: {:.2e}, min: {:.2e}"\
-                            .format(generation, my_mean, my_std_dev, \
-                            my_max, my_min))
-                    self.update_pop(fitness_list)
 
                 # send agents to arm processes
                 if num_worker > 0:
@@ -481,7 +474,15 @@ class ESPopulation:
                     print(self.means)
                     self.abort = True
 
-                if (generation > 1 and ((generation-1) % save_every == 0)) \
+                # apply updates according to _last_ generation's fitness list
+                if len(fitness_list) > 0:
+                    print("time", time.time()-t0)
+                    print("gen {} mean fitness {:.2e}+/-{:.2e} max: {:.2e}, min: {:.2e}"\
+                            .format(generation, my_mean, my_std_dev, \
+                            my_max, my_min))
+                    self.update_pop(fitness_list)
+
+                if ((generation) % save_every == 0) \
                         or generation == max_generations-1\
                         or self.abort:
                     

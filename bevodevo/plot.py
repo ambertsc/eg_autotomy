@@ -70,7 +70,9 @@ if __name__ == "__main__":
                 fig.savefig(args.filepath + filename[:-4] + ".png")
 
             if args.plot_all:
-                use_color = my_cmap(color_index)
+                use_color = my_cmap(my_data["autotomy_champion"][-1]*192)#color_index)
+                if np.mean(my_data["autotomy_proportion"]):
+                    print(f"autotomy used in {filepath}")
                 color_index =  (color_index + 10) % 192
                 my_ax.plot(x, max_y, label = f"Max fitness {run}", color=use_color,\
                         lw=3, alpha=0.5)

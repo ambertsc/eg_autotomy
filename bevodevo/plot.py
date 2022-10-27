@@ -14,7 +14,7 @@ if __name__ == "__main__":
            default="./results/test_exp/",\
            help="filepath to experiment folder")
     parser.add_argument("-l", "--y_limits", type=float, nargs="+",\
-            default=[-10, 50.],\
+            default=[-10, 50., -5, 128],\
             help="y axis range")
             
     parser.add_argument("-p", "--plot_all", type=int, default=1)
@@ -31,9 +31,10 @@ if __name__ == "__main__":
     my_dir = os.listdir(args.filepath)
 
     if args.plot_all:
-        my_fig, my_ax = plt.subplots(1,1,figsize=(8,8))
+        my_fig, my_ax = plt.subplots(1,1,figsize=(12,8))
+        my_ax2 = my_ax.twinx()
         run = 0
-        my_cmap = plt.get_cmap("magma")
+        my_cmap = plt.get_cmap("viridis")
         color_index = 0
 
     for filename in my_dir:
@@ -59,7 +60,7 @@ if __name__ == "__main__":
             plt.fill_between(x, y-std_dev_y, y+std_dev_y, alpha=0.5, label="+/- standard deviation")
             plt.xlabel(args.independent_variable, fontsize=18)
             plt.ylabel("fitness", fontsize=22)
-            plt.axis([np.min(x)-5, np.max(x)+5, args.y_limits[0], args.y_limits[1]])
+            plt.axis([args.y_limits[2], args.y_limits[3], args.y_limits[0], args.y_limits[1]])
             plt.title("{}".format(filename[9:-4]),\
                     fontsize=20)
             plt.legend(fontsize=22)
@@ -70,13 +71,30 @@ if __name__ == "__main__":
                 fig.savefig(args.filepath + filename[:-4] + ".png")
 
             if args.plot_all:
-                use_color = my_cmap(my_data["autotomy_champion"][-1]*192)#color_index)
-                if np.mean(my_data["autotomy_proportion"]):
-                    print(f"autotomy used in {filepath}")
-                color_index =  (color_index + 10) % 192
-                my_ax.plot(x, max_y, label = f"Max fitness {run}", color=use_color,\
-                        lw=3, alpha=0.5)
+
+                for jj in range(1,len(max_y)):
+                    use_color = my_cmap(my_data["autotomy_champion"][jj]*192)#color_index)
+                    my_ax.plot(x[jj-1:jj+1], max_y[jj-1:jj+1], color=use_color, lw=6, alpha=0.75)
+
+                my_ax2.fill_between(x, [0 for elem in x], \
+                        my_data["autotomy_proportion"], alpha=0.10,\
+                        color=my_cmap(10))
+
+                my_ax2.axis([args.y_limits[2], args.y_limits[3], 0, 0.5])
                 my_ax.plot(x[-1], max_y[-1], "o",color=use_color, ms=6)
+                my_ax.axis([args.y_limits[2], args.y_limits[3], args.y_limits[0], args.y_limits[1]])               
+
+                print(np.mean(my_data["autotomy_champion"][:]), use_color)
+                print(my_data["autotomy_champion"][-5:], use_color)
+
+
+                if(0):
+                    use_color = my_cmap(my_data["autotomy_champion"][-1]*192)#color_index)
+                    if np.mean(my_data["autotomy_proportion"]):
+                        print(f"autotomy used in {filepath}")
+                    color_index =  (color_index + 10) % 192
+                    my_ax.plot(x, max_y, label = f"Max fitness {run}", color=use_color,\
+                            lw=3, alpha=0.5)
 
                 run += 1
                 #my_ax.legend()
@@ -103,6 +121,7 @@ if __name__ == "__main__":
         
         my_ax.set_xlabel(args.independent_variable, fontsize=22)
         my_ax.set_ylabel("best agent fitness", fontsize=22)
+        my_ax2.set_ylabel("population autotomy proportion", fontsize=22)
 
         my_fig.tight_layout()
 

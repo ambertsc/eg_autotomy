@@ -241,8 +241,9 @@ def enjoy(argv):
                 if step_count >= argv.max_steps:
                     done = True
             print(f"env steps: {step_count} of {env.max_episode_steps}")
-            print(f"auototomy used in env? {env.unwrapped.autotomy_used}")
-            print(f"auototomy allowed in env? {env.unwrapped.allow_autotomy}")
+            print(f"autotomy used in env? {env.unwrapped.autotomy_used}")
+            print(f"autotomy allowed in env? {env.unwrapped.allow_autotomy}")
+            print(f"episode solved? {np.mean(sum_reward) > 32}")
             print(agent.body_dim, agent.__class__)
 
 

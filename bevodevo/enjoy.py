@@ -194,20 +194,24 @@ def enjoy(argv):
 
                 action = agent.get_action(obs)
 
+
                 if no_array and type(action) == np.ndarray\
                         or len(action.shape) > 1:
 
                     action = action[0]
 
                 obs, reward, done, info = env.step(action)
+                    
+
                 step_count += 1
 
                 sum_reward += reward
 
                 if gym_render:
                     env.render()
-                    time.sleep(1e-2)
-                if argv.save_frames:
+                    #time.sleep(1e-2)
+
+                if argv.save_frames and (step_count % argv.save_frames == 0):
                     
                     if "BulletEnv" in argv.env_name:
                         env.unwrapped._render_width = 640
@@ -248,9 +252,11 @@ def enjoy(argv):
         print("max rew: {:.3e}, min rew: {:.3e}".format(np.max(epd_rewards), np.min(epd_rewards)))
 
         if argv.save_gif:
+            speedup = 3 if argv.save_frames==1 else 1
+            speedup = [speedup, argv.save_frames]
             gif_tag = os.path.split(argv.file_path)[-1]
 
-            make_gif(tag=gif_tag)
+            make_gif(tag=gif_tag, speedup=speedup)
 
             
 
@@ -286,8 +292,8 @@ if __name__ == "__main__":
             help="don't render", default=False)
     parser.add_argument("-pi", "--policy", type=str,\
             help="name of policy architecture", default="MLPPolicy")
-    parser.add_argument("-s", "--save_frames", type=bool, \
-            help="save frames or not", default=False)
+    parser.add_argument("-s", "--save_frames", type=int, \
+            help="save frames or not", default=0)
     parser.add_argument("-u", "--use_autotomy", type=int, default=1,\
             help="allow autotomy in training (for envs that support it)")
 

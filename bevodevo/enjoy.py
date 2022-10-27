@@ -23,6 +23,7 @@ from bevodevo.policies.mlps import MLPPolicy, \
         HebbianMLP, ABCHebbianMLP 
 from bevodevo.policies.body_mlps import MLPBodyPolicy,\
         HebbianMLPBody, ABCHebbianMLPBody
+from bevodevo.policies.body_mlps2 import MLPBodyPolicy2
 
 
 from bevodevo.algos.es import ESPopulation
@@ -79,6 +80,9 @@ def enjoy(argv):
     elif "hebbianmlp" in argv.policy.lower():
         policy_fn = HebbianMLP
         argv.policy = "HebbianMLP"
+    elif "mlpbodypolicy2" in argv.policy.lower():
+        policy_fn = MLPBodyPolicy2
+        argv.policy = "MLPBodyPolicy2"
     elif "mlpbodypolicy" in argv.policy.lower():
         policy_fn = MLPBodyPolicy
         argv.policy = "MLPBodyPolicy"
@@ -161,6 +165,7 @@ def enjoy(argv):
 
 
         agent_args["discrete"] = discrete
+        agent_args["body_dim"] = argv.body_dim
         agent = policy_fn(**agent_args)
 
 
@@ -170,17 +175,17 @@ def enjoy(argv):
         else:
             agent.set_params(my_params)
 
-        if "BackAndForthEnv" in env_name and "body" in dir(agent):
-
-            body = agent.get_body()
-
-            env = gym.make(id=env_name, body=body, \
-                    allow_autotomy=argv.use_autotomy) 
-        else:
-            env = gym.make(id=env_name)
 
         epd_rewards = []
         for episode in range(argv.episodes):
+            if "BackAndForthEnv" in env_name and "body" in dir(agent):
+
+                body = agent.get_body()
+
+                env = gym.make(id=env_name, body=body, \
+                        allow_autotomy=argv.use_autotomy, **kwargs) 
+            else:
+                env = gym.make(id=env_name)
             obs = env.reset()
             sum_reward = 0.0
             done = False
@@ -189,20 +194,24 @@ def enjoy(argv):
 
                 action = agent.get_action(obs)
 
+
                 if no_array and type(action) == np.ndarray\
                         or len(action.shape) > 1:
 
                     action = action[0]
 
                 obs, reward, done, info = env.step(action)
+                    
+
                 step_count += 1
 
                 sum_reward += reward
 
                 if gym_render:
                     env.render()
-                    time.sleep(1e-2)
-                if argv.save_frames:
+                    #time.sleep(1e-2)
+
+                if argv.save_frames and (step_count % argv.save_frames == 0):
                     
                     if "BulletEnv" in argv.env_name:
                         env.unwrapped._render_width = 640
@@ -217,7 +226,7 @@ def enjoy(argv):
 
                     scale_factor = 0
 
-                    if float(argv.save_gif) < 1.0:
+                    if float(argv.save_gif) < 1.0 and float(argv.save_gif) != 0.0:
                         my_scale = np.clip(float(argv.save_gif), 0.1, 0.9)
                         scale_factor = int(1/my_scale)
 
@@ -231,6 +240,10 @@ def enjoy(argv):
                 time.sleep(0.01)
                 if step_count >= argv.max_steps:
                     done = True
+            print(f"env steps: {step_count} of {env.max_episode_steps}")
+            print(f"auototomy used in env? {env.unwrapped.autotomy_used}")
+            print(f"auototomy allowed in env? {env.unwrapped.allow_autotomy}")
+            print(agent.body_dim, agent.__class__)
 
 
             epd_rewards.append(sum_reward)
@@ -240,9 +253,11 @@ def enjoy(argv):
         print("max rew: {:.3e}, min rew: {:.3e}".format(np.max(epd_rewards), np.min(epd_rewards)))
 
         if argv.save_gif:
+            speedup = 3 if argv.save_frames==1 else 1
+            speedup = [speedup, argv.save_frames]
             gif_tag = os.path.split(argv.file_path)[-1]
 
-            make_gif(tag=gif_tag)
+            make_gif(tag=gif_tag, speedup=speedup)
 
             
 
@@ -256,6 +271,11 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--num_agents", type=int,\
             help="how many agents to evaluate", \
             default=1)
+    parser.add_argument("-b", "--body_dim", type=int,\
+            help="body dim", \
+            default=8)
+    parser.add_argument("-d", "--use_difficulty", type=int, default=0,\
+            help="use increased difficulty")
     parser.add_argument("-e", "--episodes", type=int,\
             help="number of episodes", default=5)
     parser.add_argument("-f", "--file_path", type=str,\
@@ -273,8 +293,8 @@ if __name__ == "__main__":
             help="don't render", default=False)
     parser.add_argument("-pi", "--policy", type=str,\
             help="name of policy architecture", default="MLPPolicy")
-    parser.add_argument("-s", "--save_frames", type=bool, \
-            help="save frames or not", default=False)
+    parser.add_argument("-s", "--save_frames", type=int, \
+            help="save frames or not", default=0)
     parser.add_argument("-u", "--use_autotomy", type=int, default=1,\
             help="allow autotomy in training (for envs that support it)")
 

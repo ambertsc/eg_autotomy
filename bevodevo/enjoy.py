@@ -138,7 +138,8 @@ def enjoy(argv):
     else:
         elite_keep = 1
 
-    for agent_idx in range(min([argv.num_agents, elite_keep])):
+    for agent_idx in range(argv.agent_idx, argv.agent_idx \
+            + min([argv.num_agents, elite_keep-argv.agent_idx])):
 
         if type(parameters) is dict:
             kwargs = dict(argv._get_kwargs())
@@ -161,6 +162,12 @@ def enjoy(argv):
             agent_args["params"] = None
             if ".pt" in my_file_path:
                 agent_args["params"] = None
+                kwargs = dict(argv._get_kwargs())
+                if "body_dim" in kwargs.keys(): 
+                    agent_args["body_dim"] = argv.body_dim
+                if "mode" in kwargs.keys(): 
+                    agent_args["mode"] = kwargs["mode"]
+
 
 
 
@@ -171,7 +178,6 @@ def enjoy(argv):
 
         if ".pt" in my_file_path:
             agent.load_state_dict(parameters)
-            agent_args["params"] = agent.get_params()
         else:
             agent.set_params(my_params)
 
@@ -184,6 +190,10 @@ def enjoy(argv):
 
                 env = gym.make(id=env_name, body=body, \
                         allow_autotomy=argv.use_autotomy, **kwargs) 
+
+                env.seed(13)
+                env.unwrapped.seed(13)
+
             else:
                 env = gym.make(id=env_name)
             obs = env.reset()
@@ -235,7 +245,10 @@ def enjoy(argv):
                                 [elem//scale_factor for elem in img.shape[:-1]],\
                                 anti_aliasing=True)
 
-                    skimage.io.imsave(image_path, img)
+                    
+                    img = 255. * img / np.max(img) 
+
+                    skimage.io.imsave(image_path, np.array(img, dtype=np.uint8))
 
                 time.sleep(0.01)
                 if step_count >= argv.max_steps:
@@ -256,7 +269,7 @@ def enjoy(argv):
         if argv.save_gif:
             speedup = 3 if argv.save_frames==1 else 1
             speedup = [speedup, argv.save_frames]
-            gif_tag = os.path.split(argv.file_path)[-1]
+            gif_tag = f"u{env.allow_autotomy}_m{agent.mode}_{os.path.split(argv.file_path)[-1]}"
 
             make_gif(tag=gif_tag, speedup=speedup)
 
@@ -284,6 +297,8 @@ if __name__ == "__main__":
             default="./results/test_exp/")
     parser.add_argument("-g", "--save_gif", type=float, default=0,\
             help="1 - save gif to ./assets, 0 - do not.") 
+    parser.add_argument("-i", "--agent_idx", type=int,\
+            help="agent index to start with", default=0)
     parser.add_argument("-m", "--mode", default=0,\
             help="mode (0,1,2, or 3) for body co-evolution")
     parser.add_argument("-ms", "--max_steps", type=int,\

@@ -21,7 +21,7 @@ def check_connected(body):
         return True
 
 def make_gif(frames_path="./frames/", gif_path="./assets", \
-        tag="no_tag", speedup=3, scale=1.0):
+        tag="no_tag", speedup=[3,3], scale=1.0):
     
     dir_list = os.listdir(frames_path)
 
@@ -30,7 +30,7 @@ def make_gif(frames_path="./frames/", gif_path="./assets", \
     dir_list.sort()
     for ii, filename in enumerate(dir_list):
    
-        if "png" in filename and (ii % speedup) == 0:
+        if "png" in filename and (ii % speedup[1]) == 0:
 
             image_path = os.path.join(frames_path, filename)
             frames.append(Image.open(image_path))
@@ -41,7 +41,7 @@ def make_gif(frames_path="./frames/", gif_path="./assets", \
     
     gif_id = int((time.time() % 1)*1000)
 
-    gif_path = os.path.join(gif_path, f"gif_{tag}_{gif_id:04d}_{speedup}X.gif") 
+    gif_path = os.path.join(gif_path, f"gif_{tag}_{gif_id:04d}_{speedup[1]}X.gif") 
 
     first_frame.save(gif_path, format="GIF", append_images=frames, \
             save_all=True, duration=42, loop=0)

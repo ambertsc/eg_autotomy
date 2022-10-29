@@ -190,8 +190,6 @@ class BackAndForthEnvClass(EvoGymBase):
 
         self.close()
 
-        old_body = copy.deepcopy(self.robot_body)
-
         body_action = action[-self.robot_body_elements:]
         autotomy = 1.0 * (body_action > 0.5).reshape(self.robot_body.shape)
 
@@ -214,17 +212,10 @@ class BackAndForthEnvClass(EvoGymBase):
         self.setup_action_space()
         self.default_viewer.track_objects("robot") 
 
-
-        if False in (np.array(self.robot_body) == np.array(old_body)):
-            autotomy_used = True
-        else:
-            autotomy_used = False
-
         self.reset()
 
         self.mode = np.array([1])
         self.goal_counter = np.array([0])
-        self.autotomy_used = autotomy_used
 
 
     def reset(self):

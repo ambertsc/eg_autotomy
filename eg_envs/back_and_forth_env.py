@@ -161,7 +161,6 @@ class BackAndForthEnvClass(EvoGymBase):
                 keep_index = check
 
         if ((self.robot_body > 0) + (1 - (mask[0] == keep_index))).max() >= 2:
-            print("autotomed")
             self.autotomy_used = True
 
         if (0 < self.robot_body * (mask[0] == keep_index)).sum() >= 3:
@@ -182,6 +181,7 @@ class BackAndForthEnvClass(EvoGymBase):
             self.autotomy_used = False
 
 
+
         self.robot_body = 1.0 * np.clip(self.robot_body, 0, 4)
         
         self.add_robot(self.robot_body, connections=None)
@@ -189,6 +189,7 @@ class BackAndForthEnvClass(EvoGymBase):
     def reverse_direction(self, action):
 
         self.close()
+        old_body = self.robot_body * 1.0
 
         body_action = action[-self.robot_body_elements:]
         autotomy = 1.0 * (body_action > 0.5).reshape(self.robot_body.shape)
@@ -212,7 +213,14 @@ class BackAndForthEnvClass(EvoGymBase):
         self.setup_action_space()
         self.default_viewer.track_objects("robot") 
 
+        if False in (np.array(self.robot_body) == np.array(old_body)):
+            autotomy_used = True
+        else: 
+            autotomy_used = False
+
         self.reset()
+
+        self.autotomy_used = autotomy_used
 
         self.mode = np.array([1])
         self.goal_counter = np.array([0])

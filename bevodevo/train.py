@@ -165,7 +165,7 @@ if __name__ == "__main__":
             sorted_args[-1].append(args_list[aa])
 
     sorted_args.sort()
-    entry_point = "python -m symr.benchmark "
+    entry_point = "python -m bevodevo.train "
 
     for elem in sorted_args:
         entry_point += " " + " ".join(elem)

@@ -50,7 +50,7 @@ if __name__ == "__main__":
             load_filepath = os.path.join(args.filepath, filename)
 
             best_agent = 0
-            auto_agent = 0
+            auto_agent = -1
             best_solves = 0
 
             for agent_idx in range(1):
